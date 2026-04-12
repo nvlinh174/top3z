@@ -2,22 +2,29 @@
 
 namespace App\Models;
 
+use App\Enums\GeneralStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
-use App\Enums\GeneralStatus;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Category extends Model
 {
-    use NodeTrait;
     use HasSlug;
+    use NodeTrait;
+
+    /**
+     * Node gốc duy nhất — luôn là bản ghi id 1 (tạo khi deploy).
+     */
+    public const SYSTEM_ROOT_ID = 1;
 
     protected $table = 'categories';
 
     protected $fillable = [
         'name',
         'slug',
+        'parent_id',
         'status',
     ];
 
@@ -25,10 +32,38 @@ class Category extends Model
         'status' => GeneralStatus::class,
     ];
 
-    public function getSlugOptions() : SlugOptions
+    public static function systemRoot(): ?self
     {
-        return SlugOptions::create()
+        return static::query()->find(self::SYSTEM_ROOT_ID);
+    }
+
+    /**
+     * Scope: danh mục hiển thị trong admin (không gồm root id 1).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeVisibleUnderSystemRoot(Builder $query): Builder
+    {
+        return $query->where('id', '!=', self::SYSTEM_ROOT_ID);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        $options = SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
+
+        if ($this->getKey() !== null && (int) $this->getKey() === self::SYSTEM_ROOT_ID) {
+            $options->doNotGenerateSlugsOnCreate();
+            $options->doNotGenerateSlugsOnUpdate();
+        }
+
+        return $options;
+    }
+
+    public function storeItem($params = [])
+    {
+        return $this->create($params);
     }
 }

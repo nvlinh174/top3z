@@ -44,7 +44,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $item = $this->model->storeItem($this->params);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Thêm mới thành công!',
+            'data' => $item,
+        ], 201);
     }
 
     /**
