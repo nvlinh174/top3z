@@ -47,6 +47,19 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Files served directly from the real public/ tree (no storage:link).
+         * Used by Spatie Media Library via MEDIA_DISK=public_media.
+         */
+        'public_media' => [
+            'driver' => 'local',
+            'root' => public_path('media'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

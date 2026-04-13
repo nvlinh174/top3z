@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\GeneralStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Kalnoy\Nestedset\NodeTrait;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -35,6 +36,14 @@ class Category extends Model
     public static function systemRoot(): ?self
     {
         return static::query()->find(self::SYSTEM_ROOT_ID);
+    }
+
+    /**
+     * @return HasMany<Article, $this>
+     */
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class);
     }
 
     /**

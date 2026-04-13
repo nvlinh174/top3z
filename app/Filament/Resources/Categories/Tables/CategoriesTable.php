@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Categories\Tables;
 use App\Enums\GeneralStatus;
 use App\Models\Category;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -32,10 +33,6 @@ class CategoriesTable
                         return str_repeat('— ', $indentLevel).((string) ($state ?? ''));
                     })
                     ->searchable(),
-                TextColumn::make('slug')
-                    ->label('Slug')
-                    ->searchable()
-                    ->toggleable(),
                 TextColumn::make('status')
                     ->label('Trạng thái')
                     ->badge()
@@ -43,8 +40,7 @@ class CategoriesTable
                     ->color(fn (GeneralStatus $state): string => match ($state) {
                         GeneralStatus::ACTIVE => 'success',
                         GeneralStatus::INACTIVE => 'gray',
-                    })
-                    ->sortable(),
+                    }),
                 TextColumn::make('created_at')
                     ->label('Tạo lúc')
                     ->dateTime()
@@ -61,6 +57,7 @@ class CategoriesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
