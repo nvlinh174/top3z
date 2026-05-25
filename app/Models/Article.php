@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Article extends Model implements HasMedia
+class Article extends Model implements HasMedia, HasRichContent
 {
     use HasSlug;
     use InteractsWithMedia;
@@ -59,14 +62,42 @@ class Article extends Model implements HasMedia
 
         $this->addMediaCollection('gallery')
             ->acceptsMimeTypes($imageMimes);
+
+        $this->addMediaCollection('content')
+            ->acceptsMimeTypes($imageMimes);
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('large')
             ->width(1200)
-            ->performOnCollections('thumbnail', 'gallery')
+            ->performOnCollections('thumbnail', 'gallery', 'content')
             ->nonQueued();
+    }
+
+    public function getRichContentAttribute(string $attribute): ?RichContentAttribute
+    {
+        if ($attribute !== 'body') {
+            return null;
+        }
+
+        return RichContentAttribute::make($this, $attribute)
+            ->fileAttachmentsDisk(config('media-library.disk_name'))
+            ->fileAttachmentsVisibility('public')
+            ->fileAttachmentProvider(
+                SpatieMediaLibraryFileAttachmentProvider::make()
+                    ->collection('content'),
+            );
+    }
+
+    public function renderRichContent(string $attribute): string
+    {
+        return $this->getRichContentAttribute($attribute)?->toHtml() ?? (string) $this->getAttribute($attribute);
+    }
+
+    public function hasRichContentAttribute(string $attribute): bool
+    {
+        return $this->getRichContentAttribute($attribute) !== null;
     }
 
     /**
