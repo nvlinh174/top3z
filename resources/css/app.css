@@ -1,4 +1,49 @@
+@import "tailwindcss";
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+
+@theme {
+    --color-brand-50: oklch(0.98 0.02 85);
+    --color-brand-400: oklch(0.78 0.14 75);
+    --color-brand-500: oklch(0.72 0.16 65);
+    --color-brand-600: oklch(0.65 0.17 55);
+
+    --color-surface-base: oklch(0.14 0.01 285);
+    --color-surface-raised: oklch(0.18 0.012 285);
+    --color-surface-overlay: oklch(0.22 0.014 285);
+
+    --color-content-primary: oklch(0.95 0.01 85);
+    --color-content-muted: oklch(0.65 0.02 85);
+
+    --color-success: oklch(0.72 0.17 145);
+    --color-danger: oklch(0.62 0.22 25);
+
+    --radius-card: 1rem;
+    --radius-button: 0.625rem;
+
+    --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+    body {
+        @apply bg-surface-base text-content-primary font-body antialiased;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer utilities {
+    .bg-blueprint {
+        background-image:
+            linear-gradient(to right, oklch(0.25 0.01 285 / 0.35) 1px, transparent 1px),
+            linear-gradient(to bottom, oklch(0.25 0.01 285 / 0.35) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }
+}
