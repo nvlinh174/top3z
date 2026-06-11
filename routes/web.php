@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WorkshopCommentController;
 use App\Http\Controllers\WorkshopController;
@@ -29,8 +30,5 @@ Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::cl
     ->middleware('throttle:10,1')
     ->name('workshops.comments.store');
 
-Route::view('/community', 'pages.placeholder', [
-    'title' => 'Cộng đồng',
-    'heading' => 'Cộng đồng',
-    'message' => 'Feed chia sẻ trải nghiệm sẽ có ở Phase 3.',
-])->name('community.index');
+Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
+Route::get('/community/{article:slug}', [CommunityController::class, 'show'])->name('community.show');

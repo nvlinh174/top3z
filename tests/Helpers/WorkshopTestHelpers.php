@@ -39,3 +39,17 @@ function createWorkshopArticle(array $overrides = []): Article
         'starts_at' => now()->addWeek(),
     ], $overrides));
 }
+
+function createCommunityPost(array $overrides = []): Article
+{
+    return Article::query()->create(array_merge([
+        'type' => ArticleType::Article,
+        'category_id' => createWorkshopCategory()->getKey(),
+        'title' => 'Bài cộng đồng thử nghiệm',
+        'slug' => 'community-'.uniqid(),
+        'excerpt' => 'Tóm tắt bài viết cộng đồng.',
+        'body' => '<p>Nội dung bài viết cộng đồng</p>',
+        'status' => GeneralStatus::ACTIVE,
+        'published_at' => now()->subDay(),
+    ], $overrides));
+}

@@ -18,5 +18,6 @@ test('placeholder routes render within layout', function () {
 
     $this->get(route('community.index'))
         ->assertSuccessful()
-        ->assertSee('Cộng đồng');
+        ->assertSee('Cộng đồng')
+        ->assertDontSee('sẽ có ở Phase 3', false);
 });

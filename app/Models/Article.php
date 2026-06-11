@@ -108,6 +108,19 @@ class Article extends Model implements HasMedia, HasRichContent
             ->orderByDesc('starts_at');
     }
 
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeLatestCommunityPosts(Builder $query): Builder
+    {
+        return $query
+            ->communityPosts()
+            ->published()
+            ->orderByDesc('published_at')
+            ->orderByDesc('id');
+    }
+
     public function isUpcomingWorkshop(): bool
     {
         return $this->starts_at !== null && $this->starts_at->isFuture();
@@ -118,6 +131,36 @@ class Article extends Model implements HasMedia, HasRichContent
         $url = $this->getFirstMediaUrl('thumbnail', $conversion);
 
         return $url !== '' ? $url : null;
+    }
+
+    public function getCoverImageUrl(string $conversion = 'large'): ?string
+    {
+        $thumbnailUrl = $this->getThumbnailUrl($conversion);
+
+        if ($thumbnailUrl !== null) {
+            return $thumbnailUrl;
+        }
+
+        $firstGallery = $this->getFirstMedia('gallery');
+
+        return $firstGallery !== null ? $firstGallery->getUrl($conversion) : null;
+    }
+
+    public function authorDisplayName(): string
+    {
+        return $this->author?->name ?? 'Top3z';
+    }
+
+    public function authorInitials(): string
+    {
+        $name = $this->authorDisplayName();
+        $parts = preg_split('/\s+/', trim($name)) ?: [];
+
+        if (count($parts) >= 2) {
+            return mb_strtoupper(mb_substr($parts[0], 0, 1).mb_substr($parts[1], 0, 1));
+        }
+
+        return mb_strtoupper(mb_substr($name, 0, 2));
     }
 
     public function getFormattedSchedule(): ?string

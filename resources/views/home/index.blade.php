@@ -100,22 +100,20 @@
         <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
             <x-site.section-heading
                 title="Từ cộng đồng"
-                subtitle="Chia sẻ trải nghiệm và ảnh sản phẩm sau workshop — Phase 3."
+                subtitle="Chia sẻ trải nghiệm và ảnh sản phẩm sau workshop."
             />
 
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ([
-                    ['title' => 'Buổi đầu tiên — chiếc kệ mini', 'excerpt' => 'Placeholder cho bài chia sẻ trải nghiệm từ workshop.'],
-                    ['title' => '3 điều học được khi build', 'excerpt' => 'Nội dung mẫu — sẽ lấy từ Article loại Bài viết.'],
-                    ['title' => 'Ảnh sản phẩm của bạn', 'excerpt' => 'Sau workshop, đăng bài khi sẵn sàng — không bắt buộc account ngay.'],
-                ] as $post)
-                    <x-ui.card hover>
-                        <div class="mb-4 aspect-[4/3] rounded-lg bg-surface-overlay bg-gradient-to-br from-brand-500/10 to-zinc-800/50"></div>
-                        <h3 class="font-display font-semibold text-content-primary">{{ $post['title'] }}</h3>
-                        <p class="mt-2 text-sm text-content-muted">{{ $post['excerpt'] }}</p>
-                    </x-ui.card>
-                @endforeach
-            </div>
+            @if ($recentPosts->isEmpty())
+                <x-ui.card class="py-10 text-center">
+                    <p class="text-sm text-content-muted">Chưa có bài chia sẻ — quay lại sau nhé.</p>
+                </x-ui.card>
+            @else
+                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($recentPosts as $post)
+                        <x-community.post-card :post="$post" />
+                    @endforeach
+                </div>
+            @endif
 
             <div class="text-center">
                 <x-ui.button variant="ghost" :href="route('community.index')">
