@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Articles;
 
+use App\Enums\ArticleReactionType;
 use App\Filament\Resources\Articles\Pages\CreateArticle;
 use App\Filament\Resources\Articles\Pages\EditArticle;
 use App\Filament\Resources\Articles\Pages\ListArticles;
@@ -50,7 +51,11 @@ class ArticleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['category', 'author', 'media']);
+            ->with(['category', 'author', 'media'])
+            ->withCount([
+                'reactions as likes_count' => fn ($query) => $query->where('type', ArticleReactionType::Like),
+                'reactions as favorites_count' => fn ($query) => $query->where('type', ArticleReactionType::Favorite),
+            ]);
     }
 
     public static function getPages(): array

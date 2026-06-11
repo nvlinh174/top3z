@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\RecordCommunityPostView;
+use App\Enums\ArticleReactionType;
 use App\Enums\ArticleType;
 use App\Models\Article;
 use App\Models\Category;
@@ -53,6 +54,11 @@ class CommunityController extends Controller
         if ($article->isPublicCommunityPost()) {
             app(RecordCommunityPostView::class)($article);
             $article->refresh();
+
+            $article->loadCount([
+                'reactions as likes_count' => fn ($query) => $query->where('type', ArticleReactionType::Like),
+                'reactions as favorites_count' => fn ($query) => $query->where('type', ArticleReactionType::Favorite),
+            ]);
         }
 
         $article->load(['category', 'author', 'media']);

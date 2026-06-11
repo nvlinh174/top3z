@@ -91,6 +91,20 @@ class ArticlesTable
                     ->alignEnd()
                     ->placeholder('0')
                     ->toggleable(),
+                TextColumn::make('likes_count')
+                    ->label('Thích')
+                    ->numeric()
+                    ->sortable()
+                    ->alignEnd()
+                    ->placeholder('0')
+                    ->toggleable(),
+                TextColumn::make('favorites_count')
+                    ->label('Yêu thích')
+                    ->numeric()
+                    ->sortable()
+                    ->alignEnd()
+                    ->placeholder('0')
+                    ->toggleable(),
                 TextColumn::make('starts_at')
                     ->label('Workshop')
                     ->dateTime()

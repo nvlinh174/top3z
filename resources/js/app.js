@@ -35,6 +35,68 @@ Alpine.data('communityPostForm', (config = {}) => ({
     },
 }));
 
+Alpine.data('communityReactions', (config = {}) => ({
+    toggleUrl: config.toggleUrl ?? '',
+    loginUrl: config.loginUrl ?? '/login',
+    authenticated: config.authenticated ?? false,
+    likesCount: config.likesCount ?? 0,
+    favoritesCount: config.favoritesCount ?? 0,
+    liked: config.liked ?? false,
+    favorited: config.favorited ?? false,
+    loading: null,
+
+    async toggle(type) {
+        if (! this.authenticated) {
+            window.location.href = this.loginUrl;
+
+            return;
+        }
+
+        if (this.loading !== null) {
+            return;
+        }
+
+        this.loading = type;
+
+        try {
+            const response = await fetch(this.toggleUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                },
+                body: JSON.stringify({ type }),
+            });
+
+            if (response.status === 401) {
+                window.location.href = this.loginUrl;
+
+                return;
+            }
+
+            if (! response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            this.likesCount = data.counts.like;
+            this.favoritesCount = data.counts.favorite;
+
+            if (data.type === 'like') {
+                this.liked = data.active;
+            }
+
+            if (data.type === 'favorite') {
+                this.favorited = data.active;
+            }
+        } finally {
+            this.loading = null;
+        }
+    },
+}));
+
 Alpine.data('guestNameForm', () => ({
     storedName: '',
     draftName: '',

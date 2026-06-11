@@ -6,6 +6,7 @@ use App\Enums\ArticleModerationStatus;
 use App\Filament\Resources\Articles\ArticleResource;
 use App\Models\Article;
 use App\Models\ArticleInterest;
+use App\Models\ArticleReaction;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -69,6 +70,12 @@ class AdminStatsOverview extends StatsOverviewWidget
                 ->description('Bài cộng đồng')
                 ->descriptionIcon('heroicon-m-eye')
                 ->color('info'),
+            Stat::make('Reaction bài', (string) ArticleReaction::query()
+                ->where('created_at', '>=', $since)
+                ->count())
+                ->description('7 ngày qua')
+                ->descriptionIcon('heroicon-m-heart')
+                ->color('gray'),
         ];
     }
 }

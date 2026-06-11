@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ArticleModerationStatus;
+use App\Enums\ArticleReactionType;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
@@ -303,6 +304,22 @@ class Article extends Model implements HasMedia, HasRichContent
     public function interests(): HasMany
     {
         return $this->hasMany(ArticleInterest::class);
+    }
+
+    /**
+     * @return HasMany<ArticleReaction, $this>
+     */
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(ArticleReaction::class);
+    }
+
+    public function hasUserReaction(User $user, ArticleReactionType $type): bool
+    {
+        return $this->reactions()
+            ->where('user_id', $user->getKey())
+            ->where('type', $type)
+            ->exists();
     }
 
     /**

@@ -65,6 +65,10 @@
 
             <x-community.author-box :post="$post" class="mt-8" />
 
+            @if (! ($isPreview ?? false))
+                <x-community.reactions :post="$post" class="mt-6" />
+            @endif
+
             @can('update', $post)
                 <div class="mt-6">
                     <x-ui.button variant="secondary" href="{{ route('community.edit', $post) }}">

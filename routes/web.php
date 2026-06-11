@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\CommunityReactionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopCommentController;
@@ -44,6 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/community/{article:slug}', [CommunityPostController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('community.update');
+    Route::post('/community/{article:slug}/reactions/toggle', [CommunityReactionController::class, 'toggle'])
+        ->middleware('throttle:30,1')
+        ->name('community.reactions.toggle');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
