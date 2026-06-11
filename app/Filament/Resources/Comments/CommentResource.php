@@ -46,7 +46,8 @@ class CommentResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['article', 'user', 'replyTo']);
+            ->with(['article', 'user', 'replyTo'])
+            ->withCount('reactions as likes_count');
     }
 
     public static function canCreate(): bool

@@ -45,7 +45,14 @@ class WorkshopController extends Controller
             'category',
             'author',
             'media',
-            'rootComments.visibleReplies.replyTo',
+            'rootComments' => fn ($query) => $query
+                ->visible()
+                ->withCount('reactions as likes_count')
+                ->with([
+                    'visibleReplies' => fn ($replyQuery) => $replyQuery
+                        ->withCount('reactions as likes_count')
+                        ->with('replyTo'),
+                ]),
         ]);
 
         $sessionToken = GuestEngagement::sessionToken();

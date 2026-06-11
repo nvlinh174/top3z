@@ -2,6 +2,7 @@
     'workshop',
     'storeRoute' => null,
     'context' => 'workshop',
+    'reactionContext' => 'workshop',
 ])
 
 @php
@@ -88,7 +89,7 @@
         <div class="mt-8 space-y-4">
             @foreach ($rootComments as $comment)
                 <div class="rounded-xl border border-zinc-800/80 bg-surface-base/30 p-4 sm:p-5">
-                    <x-workshop.comment-thread :comment="$comment" :workshop="$workshop" :store-route="$storeUrl" />
+                    <x-workshop.comment-thread :comment="$comment" :workshop="$workshop" :store-route="$storeUrl" :reaction-context="$reactionContext" />
                 </div>
             @endforeach
         </div>

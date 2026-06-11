@@ -88,6 +88,7 @@
                     :workshop="$post"
                     :store-route="route('community.comments.store', $post)"
                     context="community"
+                    reaction-context="community"
                     class="mt-10"
                 />
             @endif

@@ -34,6 +34,13 @@ class CommentsTable
                     ->label('Nội dung')
                     ->limit(60)
                     ->wrap(),
+                TextColumn::make('likes_count')
+                    ->label('Thích')
+                    ->numeric()
+                    ->sortable()
+                    ->alignEnd()
+                    ->placeholder('0')
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->label('Trạng thái')
                     ->badge()

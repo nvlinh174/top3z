@@ -146,4 +146,19 @@ class Comment extends Model
     {
         return $this->replies()->visible()->oldest();
     }
+
+    /**
+     * @return HasMany<CommentReaction, $this>
+     */
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(CommentReaction::class);
+    }
+
+    public function hasUserReaction(User $user): bool
+    {
+        return $this->reactions()
+            ->where('user_id', $user->getKey())
+            ->exists();
+    }
 }

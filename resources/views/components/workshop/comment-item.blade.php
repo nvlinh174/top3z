@@ -2,6 +2,7 @@
     'comment',
     'workshop' => null,
     'storeRoute' => null,
+    'reactionContext' => 'workshop',
     'nested' => false,
     'showReply' => true,
 ])
@@ -38,23 +39,33 @@
             <span class="whitespace-pre-wrap">{{ $comment->body }}</span>
         </div>
 
-        @if ($showReply && $workshop)
-            <div x-data="{ replying: @json((int) old('reply_to_id') === $comment->getKey()) }" class="mt-2.5">
-                <button
-                    type="button"
-                    class="cursor-pointer text-xs font-medium text-brand-400 hover:text-brand-300"
-                    @click="replying = !replying"
-                >
-                    Trả lời
-                </button>
+        @if ($workshop)
+            <div class="mt-2.5 flex flex-wrap items-center gap-3">
+                <x-comment.reaction-button
+                    :comment="$comment"
+                    :article="$workshop"
+                    :reaction-context="$reactionContext"
+                />
 
-                <div x-show="replying" x-cloak class="mt-3">
-                    <x-workshop.comment-reply-form
-                        :workshop="$workshop"
-                        :reply-to="$comment"
-                        :store-route="$storeRoute"
-                    />
-                </div>
+                @if ($showReply)
+                    <div x-data="{ replying: @json((int) old('reply_to_id') === $comment->getKey()) }">
+                        <button
+                            type="button"
+                            class="cursor-pointer text-xs font-medium text-brand-400 hover:text-brand-300"
+                            @click="replying = !replying"
+                        >
+                            Trả lời
+                        </button>
+
+                        <div x-show="replying" x-cloak class="mt-3">
+                            <x-workshop.comment-reply-form
+                                :workshop="$workshop"
+                                :reply-to="$comment"
+                                :store-route="$storeRoute"
+                            />
+                        </div>
+                    </div>
+                @endif
             </div>
         @endif
     </div>

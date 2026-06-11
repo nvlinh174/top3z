@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentReactionController;
 use App\Http\Controllers\CommunityCommentController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityPostController;
@@ -54,6 +55,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/community/{article:slug}/reactions/toggle', [CommunityReactionController::class, 'toggle'])
         ->middleware('throttle:30,1')
         ->name('community.reactions.toggle');
+    Route::post('/workshops/{article:slug}/comments/{comment}/reactions/toggle', [CommentReactionController::class, 'toggleWorkshop'])
+        ->middleware('throttle:30,1')
+        ->name('workshops.comment-reactions.toggle');
+    Route::post('/community/{article:slug}/comments/{comment}/reactions/toggle', [CommentReactionController::class, 'toggleCommunity'])
+        ->middleware('throttle:30,1')
+        ->name('community.comment-reactions.toggle');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

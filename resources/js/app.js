@@ -35,6 +35,57 @@ Alpine.data('communityPostForm', (config = {}) => ({
     },
 }));
 
+Alpine.data('commentReaction', (config = {}) => ({
+    toggleUrl: config.toggleUrl ?? '',
+    loginUrl: config.loginUrl ?? '/login',
+    authenticated: config.authenticated ?? false,
+    liked: config.liked ?? false,
+    count: config.count ?? 0,
+    loading: false,
+
+    async toggle() {
+        if (! this.authenticated) {
+            window.location.href = this.loginUrl;
+
+            return;
+        }
+
+        if (this.loading) {
+            return;
+        }
+
+        this.loading = true;
+
+        try {
+            const response = await fetch(this.toggleUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                },
+            });
+
+            if (response.status === 401) {
+                window.location.href = this.loginUrl;
+
+                return;
+            }
+
+            if (! response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            this.liked = data.active;
+            this.count = data.count;
+        } finally {
+            this.loading = false;
+        }
+    },
+}));
+
 Alpine.data('communityReactions', (config = {}) => ({
     toggleUrl: config.toggleUrl ?? '',
     loginUrl: config.loginUrl ?? '/login',

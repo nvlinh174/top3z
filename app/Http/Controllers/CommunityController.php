@@ -63,7 +63,14 @@ class CommunityController extends Controller
 
         if ($article->isPublicCommunityPost()) {
             $article->load([
-                'rootComments.visibleReplies.replyTo',
+                'rootComments' => fn ($query) => $query
+                    ->visible()
+                    ->withCount('reactions as likes_count')
+                    ->with([
+                        'visibleReplies' => fn ($replyQuery) => $replyQuery
+                            ->withCount('reactions as likes_count')
+                            ->with('replyTo'),
+                    ]),
             ]);
         }
 
