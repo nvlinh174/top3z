@@ -6,6 +6,7 @@ use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Filament\Support\ArticleModerationActions;
+use App\Models\Article;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -40,22 +41,38 @@ class ArticlesTable
                     ->badge()
                     ->formatStateUsing(fn (ArticleType $state): string => $state->label())
                     ->color('info'),
-                TextColumn::make('status')
+                TextColumn::make('moderation_status')
                     ->label('Trạng thái')
+                    ->badge()
+                    ->formatStateUsing(function (ArticleModerationStatus $state, Article $record): string {
+                        if ($record->type === ArticleType::Announcement) {
+                            return $record->status->label();
+                        }
+
+                        return $state->label();
+                    })
+                    ->color(function (ArticleModerationStatus $state, Article $record): string {
+                        if ($record->type === ArticleType::Announcement) {
+                            return match ($record->status) {
+                                GeneralStatus::ACTIVE => 'success',
+                                GeneralStatus::INACTIVE => 'gray',
+                            };
+                        }
+
+                        return match ($state) {
+                            ArticleModerationStatus::Pending => 'warning',
+                            ArticleModerationStatus::Approved => 'success',
+                            ArticleModerationStatus::Rejected => 'danger',
+                        };
+                    })
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->label('Kích hoạt')
                     ->badge()
                     ->formatStateUsing(fn (GeneralStatus $state): string => $state->label())
                     ->color(fn (GeneralStatus $state): string => match ($state) {
                         GeneralStatus::ACTIVE => 'success',
                         GeneralStatus::INACTIVE => 'gray',
-                    }),
-                TextColumn::make('moderation_status')
-                    ->label('Duyệt UGC')
-                    ->badge()
-                    ->formatStateUsing(fn (ArticleModerationStatus $state): string => $state->label())
-                    ->color(fn (ArticleModerationStatus $state): string => match ($state) {
-                        ArticleModerationStatus::Pending => 'warning',
-                        ArticleModerationStatus::Approved => 'success',
-                        ArticleModerationStatus::Rejected => 'danger',
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('author.name')
@@ -84,13 +101,13 @@ class ArticlesTable
                     ->label('Loại')
                     ->options(collect(ArticleType::cases())->mapWithKeys(fn (ArticleType $case): array => [$case->value => $case->label()])),
                 SelectFilter::make('status')
-                    ->label('Trạng thái')
+                    ->label('Kích hoạt')
                     ->options(collect(GeneralStatus::cases())->mapWithKeys(fn (GeneralStatus $case): array => [$case->value => $case->label()])),
                 SelectFilter::make('category_id')
                     ->label('Danh mục')
                     ->relationship('category', 'name', modifyQueryUsing: fn ($query) => $query->visibleUnderSystemRoot()->defaultOrder()),
                 SelectFilter::make('moderation_status')
-                    ->label('Duyệt UGC')
+                    ->label('Trạng thái duyệt')
                     ->options(collect(ArticleModerationStatus::cases())->mapWithKeys(fn (ArticleModerationStatus $case): array => [$case->value => $case->label()])),
             ])
             ->recordActions([
