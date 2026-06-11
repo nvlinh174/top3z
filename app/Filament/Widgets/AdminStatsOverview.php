@@ -62,6 +62,13 @@ class AdminStatsOverview extends StatsOverviewWidget
                 ->description('7 ngày qua')
                 ->descriptionIcon('heroicon-m-hand-thumb-up')
                 ->color('gray'),
+            Stat::make('Tổng lượt xem', (string) number_format((int) Article::query()
+                ->communityPosts()
+                ->moderationApproved()
+                ->sum('views_count')))
+                ->description('Bài cộng đồng')
+                ->descriptionIcon('heroicon-m-eye')
+                ->color('info'),
         ];
     }
 }

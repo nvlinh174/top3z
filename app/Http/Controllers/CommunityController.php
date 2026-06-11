@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RecordCommunityPostView;
 use App\Enums\ArticleType;
 use App\Models\Article;
 use App\Models\Category;
@@ -48,6 +49,11 @@ class CommunityController extends Controller
             || (auth()->check() && auth()->user()->can('view', $article));
 
         abort_unless($canView, 404);
+
+        if ($article->isPublicCommunityPost()) {
+            app(RecordCommunityPostView::class)($article);
+            $article->refresh();
+        }
 
         $article->load(['category', 'author', 'media']);
 

@@ -84,6 +84,13 @@ class ArticlesTable
                     ->dateTime()
                     ->sortable()
                     ->placeholder('—'),
+                TextColumn::make('views_count')
+                    ->label('Lượt xem')
+                    ->numeric()
+                    ->sortable()
+                    ->alignEnd()
+                    ->placeholder('0')
+                    ->toggleable(),
                 TextColumn::make('starts_at')
                     ->label('Workshop')
                     ->dateTime()
