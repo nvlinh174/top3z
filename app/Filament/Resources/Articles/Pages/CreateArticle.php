@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Articles\Pages;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Filament\Resources\Articles\ArticleResource;
@@ -20,6 +21,10 @@ class CreateArticle extends CreateRecord
         $data['author_id'] ??= auth()->id();
         $data['type'] ??= ArticleType::Announcement->value;
         $data['status'] ??= GeneralStatus::ACTIVE->value;
+
+        if ((int) $data['type'] === ArticleType::Article->value) {
+            $data['moderation_status'] ??= ArticleModerationStatus::Approved->value;
+        }
 
         return $data;
     }

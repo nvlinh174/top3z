@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ArticleType;
-use App\Enums\GeneralStatus;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
@@ -29,7 +28,7 @@ class CommunityController extends Controller
 
         $categories = Category::query()
             ->whereHas('articles', function ($articleQuery): void {
-                $articleQuery->communityPosts()->published();
+                $articleQuery->communityPosts()->moderationApproved()->published();
             })
             ->orderBy('name')
             ->get();
@@ -43,7 +42,12 @@ class CommunityController extends Controller
 
     public function show(Article $article): View
     {
-        abort_unless($this->isPublicCommunityPost($article), 404);
+        abort_unless($article->type === ArticleType::Article, 404);
+
+        $canView = $article->isPublicCommunityPost()
+            || (auth()->check() && auth()->user()->can('view', $article));
+
+        abort_unless($canView, 404);
 
         $article->load(['category', 'author', 'media']);
 
@@ -57,13 +61,7 @@ class CommunityController extends Controller
         return view('community.show', [
             'post' => $article,
             'relatedPosts' => $relatedPosts,
+            'isPreview' => ! $article->isPublicCommunityPost(),
         ]);
-    }
-
-    private function isPublicCommunityPost(Article $article): bool
-    {
-        return $article->type === ArticleType::Article
-            && $article->status === GeneralStatus::ACTIVE
-            && ($article->published_at === null || $article->published_at <= now());
     }
 }

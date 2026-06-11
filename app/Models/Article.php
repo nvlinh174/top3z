@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
@@ -32,6 +33,9 @@ class Article extends Model implements HasMedia, HasRichContent
         'excerpt',
         'body',
         'status',
+        'moderation_status',
+        'moderation_note',
+        'submitted_at',
         'published_at',
         'starts_at',
         'ends_at',
@@ -45,6 +49,8 @@ class Article extends Model implements HasMedia, HasRichContent
         return [
             'type' => ArticleType::class,
             'status' => GeneralStatus::class,
+            'moderation_status' => ArticleModerationStatus::class,
+            'submitted_at' => 'datetime',
             'published_at' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
@@ -88,6 +94,33 @@ class Article extends Model implements HasMedia, HasRichContent
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
+    public function scopeModerationApproved(Builder $query): Builder
+    {
+        return $query->where('moderation_status', ArticleModerationStatus::Approved);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeModerationPending(Builder $query): Builder
+    {
+        return $query->where('moderation_status', ArticleModerationStatus::Pending);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeModerationRejected(Builder $query): Builder
+    {
+        return $query->where('moderation_status', ArticleModerationStatus::Rejected);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
     public function scopeUpcomingWorkshops(Builder $query): Builder
     {
         return $query
@@ -116,9 +149,18 @@ class Article extends Model implements HasMedia, HasRichContent
     {
         return $query
             ->communityPosts()
+            ->moderationApproved()
             ->published()
             ->orderByDesc('published_at')
             ->orderByDesc('id');
+    }
+
+    public function isPublicCommunityPost(): bool
+    {
+        return $this->type === ArticleType::Article
+            && $this->status === GeneralStatus::ACTIVE
+            && $this->moderation_status === ArticleModerationStatus::Approved
+            && ($this->published_at === null || $this->published_at <= now());
     }
 
     public function isUpcomingWorkshop(): bool

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\GeneralStatus;
 
 test('community index lists published community posts', function () {
@@ -31,6 +32,19 @@ test('community show returns 404 for workshop announcement', function () {
     $workshop = createWorkshopArticle(['slug' => 'workshop-khong-phai-bai']);
 
     $this->get(route('community.show', $workshop))->assertNotFound();
+});
+
+test('pending community post is hidden from index', function () {
+    createCommunityPost([
+        'title' => 'Bài chờ duyệt',
+        'slug' => 'bai-cho-duyet-index',
+        'moderation_status' => ArticleModerationStatus::Pending,
+        'published_at' => null,
+    ]);
+
+    $this->get(route('community.index'))
+        ->assertSuccessful()
+        ->assertDontSee('Bài chờ duyệt');
 });
 
 test('unpublished community post is hidden from index', function () {

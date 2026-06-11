@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Models\Article;
@@ -50,6 +51,7 @@ function createCommunityPost(array $overrides = []): Article
         'excerpt' => 'Tóm tắt bài viết cộng đồng.',
         'body' => '<p>Nội dung bài viết cộng đồng</p>',
         'status' => GeneralStatus::ACTIVE,
+        'moderation_status' => ArticleModerationStatus::Approved,
         'published_at' => now()->subDay(),
     ], $overrides));
 }

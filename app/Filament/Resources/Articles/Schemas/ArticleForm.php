@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Articles\Schemas;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Models\Category;
@@ -76,6 +77,18 @@ class ArticleForm
                     ->default(GeneralStatus::ACTIVE->value)
                     ->required()
                     ->native(false),
+                Select::make('moderation_status')
+                    ->label('Duyệt UGC')
+                    ->options(collect(ArticleModerationStatus::cases())->mapWithKeys(fn (ArticleModerationStatus $case): array => [$case->value => $case->label()]))
+                    ->default(ArticleModerationStatus::Approved->value)
+                    ->required()
+                    ->native(false)
+                    ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Article->value),
+                Textarea::make('moderation_note')
+                    ->label('Ghi chú từ chối')
+                    ->rows(2)
+                    ->maxLength(1000)
+                    ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Article->value),
                 DateTimePicker::make('published_at')
                     ->label('Xuất bản lúc')
                     ->seconds(false)

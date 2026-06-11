@@ -51,6 +51,9 @@
                         <a href="{{ route('community.create') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
                             Viết bài mới
                         </a>
+                        <a href="{{ route('community.my-posts') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
+                            Bài của tôi
+                        </a>
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
                             Tài khoản
                         </a>
@@ -111,6 +114,9 @@
                     <p class="px-3 py-2 text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
                     <x-site.nav-link :href="route('community.create')" :active="request()->routeIs('community.create')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Viết bài mới
+                    </x-site.nav-link>
+                    <x-site.nav-link :href="route('community.my-posts')" :active="request()->routeIs('community.my-posts')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
+                        Bài của tôi
                     </x-site.nav-link>
                     <x-site.nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Tài khoản

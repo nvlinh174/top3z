@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Models\Article;
@@ -107,6 +108,7 @@ class CommunityDemoSeeder extends Seeder
                 'excerpt' => $excerpt,
                 'body' => $body,
                 'status' => GeneralStatus::ACTIVE,
+                'moderation_status' => ArticleModerationStatus::Approved,
                 'published_at' => $publishedAt,
             ],
         );

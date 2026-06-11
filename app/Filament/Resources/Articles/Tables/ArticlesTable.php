@@ -2,12 +2,17 @@
 
 namespace App\Filament\Resources\Articles\Tables;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
+use App\Models\Article;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -46,6 +51,16 @@ class ArticlesTable
                         GeneralStatus::ACTIVE => 'success',
                         GeneralStatus::INACTIVE => 'gray',
                     }),
+                TextColumn::make('moderation_status')
+                    ->label('Duyệt UGC')
+                    ->badge()
+                    ->formatStateUsing(fn (ArticleModerationStatus $state): string => $state->label())
+                    ->color(fn (ArticleModerationStatus $state): string => match ($state) {
+                        ArticleModerationStatus::Pending => 'warning',
+                        ArticleModerationStatus::Approved => 'success',
+                        ArticleModerationStatus::Rejected => 'danger',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('author.name')
                     ->label('Tác giả')
                     ->placeholder('—')
@@ -77,8 +92,50 @@ class ArticlesTable
                 SelectFilter::make('category_id')
                     ->label('Danh mục')
                     ->relationship('category', 'name', modifyQueryUsing: fn ($query) => $query->visibleUnderSystemRoot()->defaultOrder()),
+                SelectFilter::make('moderation_status')
+                    ->label('Duyệt UGC')
+                    ->options(collect(ArticleModerationStatus::cases())->mapWithKeys(fn (ArticleModerationStatus $case): array => [$case->value => $case->label()])),
             ])
             ->recordActions([
+                Action::make('approve')
+                    ->label('Duyệt')
+                    ->color('success')
+                    ->visible(fn (Article $record): bool => $record->type === ArticleType::Article
+                        && $record->moderation_status === ArticleModerationStatus::Pending)
+                    ->action(function (Article $record): void {
+                        $record->update([
+                            'moderation_status' => ArticleModerationStatus::Approved,
+                            'published_at' => $record->published_at ?? now(),
+                            'moderation_note' => null,
+                        ]);
+
+                        Notification::make()
+                            ->title('Đã duyệt bài viết')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('reject')
+                    ->label('Từ chối')
+                    ->color('danger')
+                    ->visible(fn (Article $record): bool => $record->type === ArticleType::Article
+                        && $record->moderation_status === ArticleModerationStatus::Pending)
+                    ->schema([
+                        Textarea::make('moderation_note')
+                            ->label('Lý do từ chối')
+                            ->required()
+                            ->rows(3),
+                    ])
+                    ->action(function (Article $record, array $data): void {
+                        $record->update([
+                            'moderation_status' => ArticleModerationStatus::Rejected,
+                            'moderation_note' => $data['moderation_note'],
+                        ]);
+
+                        Notification::make()
+                            ->title('Đã từ chối bài viết')
+                            ->warning()
+                            ->send();
+                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

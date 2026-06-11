@@ -21,6 +21,10 @@
 
     <article class="py-12 sm:py-16">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            @if ($isPreview ?? false)
+                <x-community.moderation-banner :post="$post" class="mb-8" />
+            @endif
+
             @if ($coverUrl)
                 <img
                     src="{{ $coverUrl }}"

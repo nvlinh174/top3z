@@ -62,9 +62,12 @@
                 <p class="text-sm text-content-muted">
                     Danh mục: <span class="font-medium text-content-primary">Chia sẻ trải nghiệm</span>
                 </p>
+                <p class="text-xs text-content-muted">
+                    Bài sẽ được team duyệt trước khi hiển thị trên trang Cộng đồng.
+                </p>
                 <div class="flex flex-col gap-2">
                     <x-ui.button type="submit" class="w-full justify-center">
-                        {{ $isEdit ? 'Cập nhật bài' : 'Đăng bài' }}
+                        {{ $isEdit ? 'Gửi lại để duyệt' : 'Gửi duyệt' }}
                     </x-ui.button>
                     <x-ui.button variant="ghost" href="{{ $isEdit ? route('community.show', $post) : route('community.index') }}" class="w-full justify-center">
                         Huỷ

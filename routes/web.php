@@ -35,6 +35,7 @@ Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::cl
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
     Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
     Route::post('/community', [CommunityPostController::class, 'store'])
         ->middleware('throttle:10,1')

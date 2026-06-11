@@ -1,11 +1,28 @@
 {
-    "mcpServers": {
-        "laravel-boost": {
-            "command": "php",
-            "args": [
-                "artisan",
-                "boost:mcp"
-            ]
-        }
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "php",
+      "args": [
+        "artisan",
+        "boost:mcp"
+      ]
+    },
+    "top3z_dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@benborla29/mcp-server-mysql"
+      ],
+      "env": {
+        "MYSQL_HOST": "103.221.222.18",
+        "MYSQL_USER": "codethan_top3z_dev",
+        "MYSQL_PASS": "gyg3xc9p{CB&lu_p",
+        "MYSQL_DB": "codethan_top3z_dev",
+        "MYSQL_PORT": "3306",
+        "ALLOW_INSERT_OPERATION": "false",
+        "ALLOW_UPDATE_OPERATION": "false",
+        "ALLOW_DELETE_OPERATION": "false"
+      }
     }
+  }
 }
