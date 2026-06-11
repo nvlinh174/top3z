@@ -14,6 +14,17 @@ test('guest can register interest on upcoming workshop', function () {
     expect($workshop->fresh()->interests)->toHaveCount(1);
 });
 
+test('guest interest state persists after workshop page reload', function () {
+    $workshop = createWorkshopArticle(['slug' => 'interest-ui-persist']);
+
+    $this->post(route('workshops.interest.store', $workshop))
+        ->assertRedirect(route('workshops.show', $workshop));
+
+    $this->get(route('workshops.show', $workshop))
+        ->assertSuccessful()
+        ->assertSee('Bạn đã quan tâm', false);
+});
+
 test('guest cannot register duplicate interest in same session', function () {
     $workshop = createWorkshopArticle(['slug' => 'interest-duplicate']);
 
