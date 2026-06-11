@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\WorkshopController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/robots.txt', function () {
@@ -17,11 +18,8 @@ Route::get('/robots.txt', function () {
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::view('/workshops', 'pages.placeholder', [
-    'title' => 'Lịch workshop',
-    'heading' => 'Lịch workshop',
-    'message' => 'Trang lịch workshop sẽ có ở Phase 1.',
-])->name('workshops.index');
+Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
+Route::get('/workshops/{article:slug}', [WorkshopController::class, 'show'])->name('workshops.show');
 
 Route::view('/community', 'pages.placeholder', [
     'title' => 'Cộng đồng',

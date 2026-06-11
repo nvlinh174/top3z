@@ -28,6 +28,20 @@
                     Khám phá cộng đồng
                 </x-ui.button>
             </div>
+
+            @if ($featuredWorkshop)
+                <div class="mt-10 max-w-xl rounded-[var(--radius-card)] border border-brand-500/30 bg-surface-raised/80 p-5 backdrop-blur-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Workshop sắp tới</p>
+                    <p class="mt-2 font-display text-lg font-semibold text-content-primary">
+                        <a href="{{ route('workshops.show', $featuredWorkshop) }}" class="hover:text-brand-400">
+                            {{ $featuredWorkshop->title }}
+                        </a>
+                    </p>
+                    @if ($featuredWorkshop->getFormattedSchedule())
+                        <p class="mt-1 font-mono text-sm text-content-muted">{{ $featuredWorkshop->getFormattedSchedule() }}</p>
+                    @endif
+                </div>
+            @endif
         </div>
     </section>
 
@@ -45,10 +59,10 @@
         <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
             <x-site.section-heading
                 title="Workshop sắp tới"
-                subtitle="Lịch sự kiện sẽ hiển thị từ admin — Phase 1 kết nối dữ liệu thật."
+                subtitle="Lịch sự kiện từ admin — cập nhật thường xuyên."
             />
 
-            @if ($upcomingWorkshops->isEmpty())
+            @if ($upcomingWorkshops->isEmpty() && ! $featuredWorkshop)
                 <x-ui.card class="flex flex-col items-center py-12 text-center">
                     <div class="flex size-14 items-center justify-center rounded-full bg-brand-500/10 text-brand-400">
                         <svg class="size-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -65,6 +79,18 @@
                         Đến trang lịch
                     </x-ui.button>
                 </x-ui.card>
+            @else
+                <div class="space-y-4">
+                    @foreach ($upcomingWorkshops as $workshop)
+                        <x-workshop.timeline-item :workshop="$workshop" />
+                    @endforeach
+                </div>
+
+                <div class="text-center">
+                    <x-ui.button variant="ghost" :href="route('workshops.index')" class="mt-6">
+                        Xem toàn bộ lịch →
+                    </x-ui.button>
+                </div>
             @endif
         </div>
     </section>

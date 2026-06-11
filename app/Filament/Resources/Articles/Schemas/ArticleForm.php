@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ArticleForm
@@ -24,6 +25,7 @@ class ArticleForm
                     ->options(collect(ArticleType::cases())->mapWithKeys(fn (ArticleType $case): array => [$case->value => $case->label()]))
                     ->default(ArticleType::Announcement->value)
                     ->required()
+                    ->live()
                     ->native(false),
                 Select::make('category_id')
                     ->label('Danh mục')
@@ -78,6 +80,17 @@ class ArticleForm
                     ->label('Xuất bản lúc')
                     ->seconds(false)
                     ->native(false),
+                DateTimePicker::make('starts_at')
+                    ->label('Giờ bắt đầu')
+                    ->seconds(false)
+                    ->native(false)
+                    ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Announcement->value),
+                DateTimePicker::make('ends_at')
+                    ->label('Giờ kết thúc')
+                    ->seconds(false)
+                    ->native(false)
+                    ->after('starts_at')
+                    ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Announcement->value),
                 TextInput::make('meta_title')
                     ->label('Meta title')
                     ->maxLength(255),

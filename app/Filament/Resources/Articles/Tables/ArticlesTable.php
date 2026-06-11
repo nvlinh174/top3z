@@ -55,6 +55,12 @@ class ArticlesTable
                     ->dateTime()
                     ->sortable()
                     ->placeholder('—'),
+                TextColumn::make('starts_at')
+                    ->label('Workshop')
+                    ->dateTime()
+                    ->sortable()
+                    ->placeholder('—')
+                    ->toggleable(),
                 TextColumn::make('updated_at')
                     ->label('Cập nhật')
                     ->dateTime()

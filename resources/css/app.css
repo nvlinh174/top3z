@@ -46,4 +46,24 @@
             linear-gradient(to bottom, oklch(0.25 0.01 285 / 0.35) 1px, transparent 1px);
         background-size: 24px 24px;
     }
+
+    .prose-workshop {
+        @apply max-w-none text-content-primary leading-relaxed;
+
+        & :where(h2, h3, h4) {
+            @apply mt-8 mb-4 font-display font-semibold text-brand-400;
+        }
+
+        & :where(p, ul, ol) {
+            @apply mb-4 text-content-muted;
+        }
+
+        & :where(a) {
+            @apply text-brand-400 underline-offset-2 hover:underline;
+        }
+
+        & :where(img) {
+            @apply my-6 rounded-lg;
+        }
+    }
 }

@@ -49,7 +49,7 @@ return [
 
         /*
          * Files served directly from the real public/ tree (no storage:link).
-         * Used by Spatie Media Library via MEDIA_DISK=public_media.
+         * Public media for Spatie Media Library (see config/media-library.php).
          */
         'public_media' => [
             'driver' => 'local',
