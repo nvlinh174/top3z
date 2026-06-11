@@ -1,12 +1,14 @@
 @props([
     'workshop',
     'replyTo',
+    'storeRoute' => null,
 ])
 
 @php
     /** @var \App\Models\Article $workshop */
     /** @var \App\Models\Comment $replyTo */
     $hasErrors = (int) old('reply_to_id') === $replyTo->getKey();
+    $storeUrl = $storeRoute ?? route('workshops.comments.store', $workshop);
 @endphp
 
 <div class="mt-4 rounded-lg border border-zinc-800/80 bg-surface-base/50 p-4 sm:p-5">
@@ -19,7 +21,7 @@
 
     <form
         method="POST"
-        action="{{ route('workshops.comments.store', $workshop) }}"
+        action="{{ $storeUrl }}"
         class="flex flex-col gap-4"
         @guest x-data="guestNameForm" @submit="remember" @endguest
     >

@@ -61,6 +61,12 @@ class CommunityController extends Controller
             ]);
         }
 
+        if ($article->isPublicCommunityPost()) {
+            $article->load([
+                'rootComments.visibleReplies.replyTo',
+            ]);
+        }
+
         $article->load(['category', 'author', 'media']);
 
         $relatedPosts = Article::query()

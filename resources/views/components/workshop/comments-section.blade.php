@@ -1,11 +1,15 @@
 @props([
     'workshop',
+    'storeRoute' => null,
+    'context' => 'workshop',
 ])
 
 @php
     /** @var \App\Models\Article $workshop */
     $rootComments = $workshop->rootComments;
     $commentCount = $workshop->visibleCommentCount();
+    $storeUrl = $storeRoute ?? route('workshops.comments.store', $workshop);
+    $isCommunity = $context === 'community';
 @endphp
 
 <section {{ $attributes->merge(['class' => 'mt-12 rounded-[var(--radius-card)] border border-zinc-800/80 bg-surface-raised p-6 sm:p-8']) }} id="thao-luan">
@@ -20,13 +24,17 @@
         </p>
     @else
         <p class="mt-2 text-sm text-content-muted">
-            Bạn không cần tài khoản. Ý kiến giúp chúng tôi chọn chủ đề workshop phù hợp — có thể trả lời bình luận của nhau.
+            @if ($isCommunity)
+                Bạn không cần tài khoản. Tham gia thảo luận và trả lời bình luận của nhau.
+            @else
+                Bạn không cần tài khoản. Ý kiến giúp chúng tôi chọn chủ đề workshop phù hợp — có thể trả lời bình luận của nhau.
+            @endif
         </p>
     @endauth
 
     <form
         method="POST"
-        action="{{ route('workshops.comments.store', $workshop) }}"
+        action="{{ $storeUrl }}"
         class="mt-8 flex flex-col gap-5 border-b border-zinc-800/80 pb-10"
         @guest x-data="guestNameForm" @submit="remember" @endguest
     >
@@ -56,7 +64,7 @@
                 required
                 maxlength="2000"
                 class="w-full rounded-[var(--radius-button)] border border-zinc-700 bg-surface-base px-3 py-2.5 text-sm text-content-primary placeholder:text-content-muted focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                placeholder="Bạn mong muốn workshop chủ đề gì? Có gì cần lưu ý khi ghé makerspace?"
+                placeholder="{{ $isCommunity ? 'Chia sẻ suy nghĩ của bạn về bài viết này...' : 'Bạn mong muốn workshop chủ đề gì? Có gì cần lưu ý khi ghé makerspace?' }}"
             >{{ old('reply_to_id') ? '' : old('body') }}</textarea>
             @unless (old('reply_to_id'))
                 @error('body')
@@ -67,20 +75,20 @@
 
         <div class="pt-1">
             <x-ui.button variant="primary" type="submit">
-                Gửi góp ý
+                {{ $isCommunity ? 'Gửi bình luận' : 'Gửi góp ý' }}
             </x-ui.button>
         </div>
     </form>
 
     @if ($rootComments->isEmpty())
         <p class="mt-8 text-center text-sm text-content-muted">
-            Chưa có góp ý nào. Hãy là người đầu tiên chia sẻ!
+            {{ $isCommunity ? 'Chưa có bình luận nào. Hãy là người đầu tiên!' : 'Chưa có góp ý nào. Hãy là người đầu tiên chia sẻ!' }}
         </p>
     @else
         <div class="mt-8 space-y-4">
             @foreach ($rootComments as $comment)
                 <div class="rounded-xl border border-zinc-800/80 bg-surface-base/30 p-4 sm:p-5">
-                    <x-workshop.comment-thread :comment="$comment" :workshop="$workshop" />
+                    <x-workshop.comment-thread :comment="$comment" :workshop="$workshop" :store-route="$storeUrl" />
                 </div>
             @endforeach
         </div>

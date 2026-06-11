@@ -1,6 +1,7 @@
 @props([
     'comment',
     'workshop' => null,
+    'storeRoute' => null,
     'nested' => false,
     'showReply' => true,
 ])
@@ -51,6 +52,7 @@
                     <x-workshop.comment-reply-form
                         :workshop="$workshop"
                         :reply-to="$comment"
+                        :store-route="$storeRoute"
                     />
                 </div>
             </div>

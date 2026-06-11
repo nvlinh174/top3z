@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommunityCommentController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityReactionController;
@@ -35,6 +36,9 @@ Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::cl
     ->name('workshops.comments.store');
 
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
+Route::post('/community/{article:slug}/comments', [CommunityCommentController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('community.comments.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');

@@ -82,6 +82,15 @@
             </div>
 
             <x-community.gallery :post="$post" class="mt-10" />
+
+            @if (! ($isPreview ?? false))
+                <x-workshop.comments-section
+                    :workshop="$post"
+                    :store-route="route('community.comments.store', $post)"
+                    context="community"
+                    class="mt-10"
+                />
+            @endif
         </div>
 
         @if ($relatedPosts->isNotEmpty())
