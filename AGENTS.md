@@ -157,4 +157,14 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 - Do NOT delete tests without approval.
 
+=== top3z project rules ===
+
+# Top3z Makerspace
+
+Before implementing features, read `plans/STATUS.md` then `plans/CODEBASE.md`. Full agent rules: `plans/00-agent-rules.md`.
+
+After completing work, update `plans/STATUS.md` (phase + session log), tick `plans/12-milestones-checklist.md`, and sync `plans/CODEBASE.md` if architecture changed.
+
+Product: Workshop = Article (Announcement); community = Article (Article); guest-first engagement; public UI = Tailwind makerspace (no Tabler/Bootstrap/Filament assets on public); Vietnamese UI.
+
 </laravel-boost-guidelines>
