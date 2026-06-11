@@ -322,6 +322,27 @@ class Article extends Model implements HasMedia, HasRichContent
             ->exists();
     }
 
+    public function hasGuestReaction(string $sessionToken, ArticleReactionType $type): bool
+    {
+        return $this->reactions()
+            ->whereNull('user_id')
+            ->where('session_token', $sessionToken)
+            ->where('type', $type)
+            ->exists();
+    }
+
+    public function hasViewerReaction(?int $userId, string $sessionToken, ArticleReactionType $type): bool
+    {
+        if ($userId !== null) {
+            return $this->reactions()
+                ->where('user_id', $userId)
+                ->where('type', $type)
+                ->exists();
+        }
+
+        return $this->hasGuestReaction($sessionToken, $type);
+    }
+
     /**
      * @return HasMany<Comment, $this>
      */

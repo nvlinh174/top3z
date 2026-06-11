@@ -68,12 +68,14 @@ test('admin dashboard shows top reacted community posts widget', function () {
     ArticleReaction::query()->create([
         'article_id' => $popular->getKey(),
         'user_id' => $member->getKey(),
+        'session_token' => hash('sha256', 'top-member-like'),
         'type' => ArticleReactionType::Like,
     ]);
 
     ArticleReaction::query()->create([
         'article_id' => $popular->getKey(),
         'user_id' => $admin->getKey(),
+        'session_token' => hash('sha256', 'top-admin-favorite'),
         'type' => ArticleReactionType::Favorite,
     ]);
 
@@ -101,18 +103,21 @@ test('top reacted community posts widget orders by total reactions', function ()
     ArticleReaction::query()->create([
         'article_id' => $more->getKey(),
         'user_id' => $member->getKey(),
+        'session_token' => hash('sha256', 'top-more-member-like'),
         'type' => ArticleReactionType::Like,
     ]);
 
     ArticleReaction::query()->create([
         'article_id' => $more->getKey(),
         'user_id' => $admin->getKey(),
+        'session_token' => hash('sha256', 'top-more-admin-favorite'),
         'type' => ArticleReactionType::Favorite,
     ]);
 
     ArticleReaction::query()->create([
         'article_id' => $less->getKey(),
         'user_id' => $member->getKey(),
+        'session_token' => hash('sha256', 'top-less-member-like'),
         'type' => ArticleReactionType::Like,
     ]);
 

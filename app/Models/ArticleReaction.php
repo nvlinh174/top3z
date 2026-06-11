@@ -14,6 +14,8 @@ class ArticleReaction extends Model
     protected $fillable = [
         'article_id',
         'user_id',
+        'session_token',
+        'ip_hash',
         'type',
     ];
 

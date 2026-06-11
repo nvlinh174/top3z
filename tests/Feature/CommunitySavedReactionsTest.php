@@ -24,6 +24,7 @@ test('authenticated user sees liked posts on default tab', function () {
     ArticleReaction::query()->create([
         'article_id' => $liked->getKey(),
         'user_id' => $user->getKey(),
+        'session_token' => hash('sha256', 'saved-liked'),
         'type' => ArticleReactionType::Like,
     ]);
 
@@ -51,12 +52,14 @@ test('favorited tab shows only favorited public posts', function () {
     ArticleReaction::query()->create([
         'article_id' => $favorited->getKey(),
         'user_id' => $user->getKey(),
+        'session_token' => hash('sha256', 'saved-favorited'),
         'type' => ArticleReactionType::Favorite,
     ]);
 
     ArticleReaction::query()->create([
         'article_id' => $likedOnly->getKey(),
         'user_id' => $user->getKey(),
+        'session_token' => hash('sha256', 'saved-liked-only'),
         'type' => ArticleReactionType::Like,
     ]);
 
@@ -80,6 +83,7 @@ test('saved list hides posts that are no longer public', function () {
     ArticleReaction::query()->create([
         'article_id' => $hidden->getKey(),
         'user_id' => $user->getKey(),
+        'session_token' => hash('sha256', 'saved-hidden'),
         'type' => ArticleReactionType::Like,
     ]);
 

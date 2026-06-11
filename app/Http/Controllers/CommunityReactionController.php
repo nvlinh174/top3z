@@ -7,6 +7,8 @@ use App\Enums\ArticleType;
 use App\Http\Requests\ToggleCommunityReactionRequest;
 use App\Models\Article;
 use App\Models\ArticleReaction;
+use App\Support\GuestEngagement;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 
 class CommunityReactionController extends Controller
@@ -18,11 +20,18 @@ class CommunityReactionController extends Controller
 
         $type = $request->enum('type', ArticleReactionType::class);
         $user = $request->user();
+        $sessionToken = GuestEngagement::sessionToken();
 
         $existing = ArticleReaction::query()
             ->where('article_id', $article->getKey())
-            ->where('user_id', $user->getKey())
             ->where('type', $type)
+            ->when(
+                $user !== null,
+                fn (Builder $query) => $query->where('user_id', $user->getKey()),
+                fn (Builder $query) => $query
+                    ->whereNull('user_id')
+                    ->where('session_token', $sessionToken),
+            )
             ->first();
 
         if ($existing !== null) {
@@ -31,7 +40,9 @@ class CommunityReactionController extends Controller
         } else {
             ArticleReaction::query()->create([
                 'article_id' => $article->getKey(),
-                'user_id' => $user->getKey(),
+                'user_id' => $user?->getKey(),
+                'session_token' => $sessionToken,
+                'ip_hash' => GuestEngagement::ipHash(),
                 'type' => $type,
             ]);
             $active = true;

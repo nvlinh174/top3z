@@ -88,8 +88,6 @@ Alpine.data('commentReaction', (config = {}) => ({
 
 Alpine.data('communityReactions', (config = {}) => ({
     toggleUrl: config.toggleUrl ?? '',
-    loginUrl: config.loginUrl ?? '/login',
-    authenticated: config.authenticated ?? false,
     likesCount: config.likesCount ?? 0,
     favoritesCount: config.favoritesCount ?? 0,
     liked: config.liked ?? false,
@@ -97,12 +95,6 @@ Alpine.data('communityReactions', (config = {}) => ({
     loading: null,
 
     async toggle(type) {
-        if (! this.authenticated) {
-            window.location.href = this.loginUrl;
-
-            return;
-        }
-
         if (this.loading !== null) {
             return;
         }
@@ -119,12 +111,6 @@ Alpine.data('communityReactions', (config = {}) => ({
                 },
                 body: JSON.stringify({ type }),
             });
-
-            if (response.status === 401) {
-                window.location.href = this.loginUrl;
-
-                return;
-            }
 
             if (! response.ok) {
                 return;

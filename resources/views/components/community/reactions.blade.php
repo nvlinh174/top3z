@@ -5,7 +5,9 @@
 @php
     /** @var \App\Models\Article $post */
     use App\Enums\ArticleReactionType;
+    use App\Support\GuestEngagement;
 
+    $sessionToken = GuestEngagement::sessionToken();
     $loginUrl = route('login', ['intended' => route('community.show', $post)]);
 @endphp
 
@@ -13,20 +15,17 @@
     {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-3']) }}
     x-data="communityReactions({
         toggleUrl: @js(route('community.reactions.toggle', $post)),
-        loginUrl: @js($loginUrl),
-        authenticated: @js(auth()->check()),
         likesCount: @js((int) ($post->likes_count ?? 0)),
         favoritesCount: @js((int) ($post->favorites_count ?? 0)),
-        liked: @js(auth()->check() && $post->hasUserReaction(auth()->user(), ArticleReactionType::Like)),
-        favorited: @js(auth()->check() && $post->hasUserReaction(auth()->user(), ArticleReactionType::Favorite)),
+        liked: @js($post->hasViewerReaction(auth()->id(), $sessionToken, ArticleReactionType::Like)),
+        favorited: @js($post->hasViewerReaction(auth()->id(), $sessionToken, ArticleReactionType::Favorite)),
     })"
 >
     <button
         type="button"
         @click="toggle('like')"
         :disabled="loading === 'like'"
-        :class="authenticated ? 'hover:border-brand-500/50 hover:text-brand-400' : 'cursor-pointer opacity-60 hover:opacity-80'"
-        class="inline-flex items-center gap-2 rounded-[var(--radius-button)] border border-zinc-800/80 bg-surface-raised px-4 py-2 text-sm text-content-muted transition"
+        class="inline-flex items-center gap-2 rounded-[var(--radius-button)] border border-zinc-800/80 bg-surface-raised px-4 py-2 text-sm text-content-muted transition hover:border-brand-500/50 hover:text-brand-400"
         :aria-pressed="liked"
         aria-label="Thích bài viết"
     >
@@ -48,8 +47,7 @@
         type="button"
         @click="toggle('favorite')"
         :disabled="loading === 'favorite'"
-        :class="authenticated ? 'hover:border-brand-500/50 hover:text-brand-400' : 'cursor-pointer opacity-60 hover:opacity-80'"
-        class="inline-flex items-center gap-2 rounded-[var(--radius-button)] border border-zinc-800/80 bg-surface-raised px-4 py-2 text-sm text-content-muted transition"
+        class="inline-flex items-center gap-2 rounded-[var(--radius-button)] border border-zinc-800/80 bg-surface-raised px-4 py-2 text-sm text-content-muted transition hover:border-brand-500/50 hover:text-brand-400"
         :aria-pressed="favorited"
         aria-label="Yêu thích bài viết"
     >
@@ -69,7 +67,8 @@
 
     @guest
         <p class="w-full text-xs text-content-muted">
-            <a href="{{ $loginUrl }}" class="text-brand-400 hover:underline">Đăng nhập</a> để thích hoặc lưu bài viết.
+            Không cần tài khoản để thích hoặc lưu bài.
+            <a href="{{ $loginUrl }}" class="text-brand-400 hover:underline">Đăng nhập</a> để xem lại trong 「Bài đã lưu」.
         </p>
     @endguest
 </div>
