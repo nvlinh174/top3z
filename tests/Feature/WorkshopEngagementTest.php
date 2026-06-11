@@ -3,6 +3,7 @@
 use App\Enums\CommentStatus;
 use App\Models\ArticleInterest;
 use App\Models\Comment;
+use App\Models\User;
 
 test('guest can register interest on upcoming workshop', function () {
     $workshop = createWorkshopArticle(['slug' => 'interest-upcoming']);
@@ -181,4 +182,51 @@ test('guest replying to a child comment uses mention and stays at two levels', f
         ->assertSuccessful()
         ->assertSee('@Bình')
         ->assertSee('Mình đi chung nhé!');
+});
+
+test('authenticated user comment is stored with user id not guest name', function () {
+    $user = User::factory()->create(['name' => 'Test01']);
+    $workshop = createWorkshopArticle(['slug' => 'comment-auth-user']);
+
+    $this->actingAs($user)
+        ->post(route('workshops.comments.store', $workshop), [
+            'guest_name' => 'Should Be Ignored',
+            'body' => 'Góp ý từ tài khoản đã đăng nhập.',
+        ])
+        ->assertRedirect(route('workshops.show', $workshop).'#thao-luan');
+
+    $comment = Comment::query()->where('article_id', $workshop->getKey())->latest('id')->first();
+
+    expect($comment->user_id)->toBe($user->id)
+        ->and($comment->guest_name)->toBeNull()
+        ->and($comment->body)->toBe('Góp ý từ tài khoản đã đăng nhập.');
+
+    $this->actingAs($user)
+        ->get(route('workshops.show', $workshop))
+        ->assertSuccessful()
+        ->assertSee('Test01')
+        ->assertSee('Góp ý từ tài khoản đã đăng nhập.')
+        ->assertDontSee('Góp ý với tên', false)
+        ->assertDontSee('Đổi tên', false);
+});
+
+test('authenticated user interest is stored with user id', function () {
+    $user = User::factory()->create();
+    $workshop = createWorkshopArticle(['slug' => 'interest-auth-user']);
+
+    $this->actingAs($user)
+        ->post(route('workshops.interest.store', $workshop))
+        ->assertRedirect(route('workshops.show', $workshop));
+
+    $interest = ArticleInterest::query()
+        ->where('article_id', $workshop->getKey())
+        ->where('user_id', $user->id)
+        ->first();
+
+    expect($interest)->not->toBeNull();
+
+    $this->actingAs($user)
+        ->get(route('workshops.show', $workshop))
+        ->assertSuccessful()
+        ->assertSee('Bạn đã quan tâm', false);
 });

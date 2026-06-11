@@ -12,14 +12,16 @@
 <div class="mt-4 rounded-lg border border-zinc-800/80 bg-surface-base/50 p-4 sm:p-5">
     <p class="mb-4 text-sm text-content-muted">
         Trả lời <span class="font-medium text-brand-400">{{ '@'.$replyTo->mentionName() }}</span>
+        @auth
+            <span class="text-content-muted">· dưới tên <strong class="font-medium text-content-primary">{{ auth()->user()->name }}</strong></span>
+        @endauth
     </p>
 
     <form
         method="POST"
         action="{{ route('workshops.comments.store', $workshop) }}"
         class="flex flex-col gap-4"
-        x-data="guestNameForm"
-        @submit="remember"
+        @guest x-data="guestNameForm" @submit="remember" @endguest
     >
         @csrf
         <input type="hidden" name="reply_to_id" value="{{ $replyTo->getKey() }}">
@@ -28,12 +30,14 @@
             <input type="text" name="website" tabindex="-1" autocomplete="off">
         </div>
 
-        <x-workshop.guest-name-field
-            :input-id="'guest_name_'.$replyTo->getKey()"
-            :server-value="$hasErrors ? old('guest_name', '') : ''"
-            :show-errors="$hasErrors"
-            context="reply"
-        />
+        @guest
+            <x-workshop.guest-name-field
+                :input-id="'guest_name_'.$replyTo->getKey()"
+                :server-value="$hasErrors ? old('guest_name', '') : ''"
+                :show-errors="$hasErrors"
+                context="reply"
+            />
+        @endguest
 
         <div>
             <label for="body_{{ $replyTo->getKey() }}" class="mb-2 block text-sm font-medium text-content-primary">

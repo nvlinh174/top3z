@@ -52,7 +52,7 @@ class WorkshopController extends Controller
 
         return view('workshops.show', [
             'workshop' => $article,
-            'hasInterest' => $article->hasGuestInterest($sessionToken),
+            'hasInterest' => $article->hasViewerInterest(auth()->id(), $sessionToken),
         ]);
     }
 }

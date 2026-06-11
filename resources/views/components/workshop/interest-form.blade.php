@@ -47,6 +47,10 @@
     @endif
 
     <p class="mt-3 text-center text-xs leading-relaxed text-content-muted">
-        Một cú nhấp — không cần tài khoản, không phải đăng ký giữ chỗ.
+        @auth
+            Một cú nhấp — quan tâm được lưu vào tài khoản của bạn.
+        @else
+            Một cú nhấp — không cần tài khoản, không phải đăng ký giữ chỗ.
+        @endauth
     </p>
 </div>

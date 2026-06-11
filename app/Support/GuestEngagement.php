@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
@@ -48,6 +50,28 @@ class GuestEngagement
         }
 
         return hash('sha256', $ip.'|'.config('app.key'));
+    }
+
+    public static function mergeActivityForUser(User $user): void
+    {
+        Comment::query()
+            ->whereNull('user_id')
+            ->where('guest_email', $user->email)
+            ->update([
+                'user_id' => $user->id,
+                'guest_name' => null,
+                'guest_email' => null,
+            ]);
+    }
+
+    public static function rotateToken(): string
+    {
+        $token = hash('sha256', Str::random(40).'|'.config('app.key'));
+
+        self::rememberToken($token);
+        self::queueGuestTokenCookie($token);
+
+        return $token;
     }
 
     private static function rememberToken(string $token): void

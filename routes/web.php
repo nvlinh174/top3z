@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopCommentController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\WorkshopInterestController;
@@ -32,3 +33,11 @@ Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::cl
 
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
 Route::get('/community/{article:slug}', [CommunityController::class, 'show'])->name('community.show');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';

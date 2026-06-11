@@ -30,12 +30,15 @@ class WorkshopCommentController extends Controller
             $replyToId = $placement['reply_to_id'];
         }
 
+        $user = $request->user();
+
         Comment::query()->create([
             'article_id' => $article->getKey(),
             'parent_id' => $parentId,
             'reply_to_id' => $replyToId,
-            'guest_name' => $request->validated('guest_name'),
-            'guest_email' => $request->validated('guest_email'),
+            'user_id' => $user?->id,
+            'guest_name' => $user ? null : $request->validated('guest_name'),
+            'guest_email' => $user ? null : $request->validated('guest_email'),
             'body' => $request->validated('body'),
             'status' => CommentStatus::Active,
         ]);

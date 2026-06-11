@@ -17,9 +17,10 @@ class WorkshopInterestController extends Controller
         abort_unless($this->isPublicWorkshop($article), 404);
         abort_unless($article->isUpcomingWorkshop(), 403);
 
+        $user = $request->user();
         $sessionToken = GuestEngagement::sessionToken();
 
-        if ($article->hasGuestInterest($sessionToken)) {
+        if ($article->hasViewerInterest($user?->id, $sessionToken)) {
             return redirect()
                 ->route('workshops.show', $article)
                 ->with('info', 'Bạn đã bày tỏ quan tâm buổi workshop này rồi.');
@@ -27,6 +28,7 @@ class WorkshopInterestController extends Controller
 
         ArticleInterest::query()->create([
             'article_id' => $article->getKey(),
+            'user_id' => $user?->id,
             'session_token' => $sessionToken,
             'ip_hash' => GuestEngagement::ipHash(),
         ]);

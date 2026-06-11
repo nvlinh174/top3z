@@ -1,6 +1,6 @@
 <header
     class="sticky top-0 z-50 border-b border-zinc-800/80 bg-surface-base/90 backdrop-blur-md"
-    x-data="{ open: false }"
+    x-data="{ open: false, userMenu: false }"
 >
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="font-display text-lg font-bold tracking-tight text-content-primary">
@@ -19,10 +19,50 @@
             </x-site.nav-link>
         </nav>
 
-        <div class="hidden md:block">
-            <x-ui.button variant="ghost" href="{{ route('community.index') }}">
-                Khám phá
-            </x-ui.button>
+        <div class="hidden items-center gap-3 md:flex">
+            @auth
+                <div class="relative" x-on:click.outside="userMenu = false">
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-[var(--radius-button)] px-3 py-2 text-sm font-medium text-content-primary hover:bg-surface-raised"
+                        x-on:click="userMenu = ! userMenu"
+                        aria-haspopup="true"
+                        x-bind:aria-expanded="userMenu.toString()"
+                    >
+                        <span class="flex size-8 items-center justify-center rounded-full bg-brand-500/20 text-xs font-bold text-brand-400">
+                            {{ auth()->user()->name ? mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) : 'U' }}
+                        </span>
+                        <span class="max-w-[8rem] truncate">{{ auth()->user()->name }}</span>
+                        <svg class="size-4 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+
+                    <div
+                        x-show="userMenu"
+                        x-cloak
+                        x-transition
+                        class="absolute right-0 z-50 mt-2 w-48 rounded-[var(--radius-button)] border border-zinc-800 bg-surface-raised py-1 shadow-lg"
+                    >
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
+                            Tài khoản
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-content-muted hover:bg-surface-overlay hover:text-content-primary">
+                                Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <x-ui.button variant="ghost" href="{{ route('login') }}">
+                    Đăng nhập
+                </x-ui.button>
+                <x-ui.button href="{{ route('register') }}">
+                    Đăng ký
+                </x-ui.button>
+            @endauth
         </div>
 
         <button
@@ -58,6 +98,30 @@
             <x-site.nav-link :href="route('community.index')" :active="request()->routeIs('community.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                 Cộng đồng
             </x-site.nav-link>
+
+            <div class="mt-3 border-t border-zinc-800/80 pt-3">
+                @auth
+                    <p class="px-3 py-2 text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                    <x-site.nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
+                        Tài khoản
+                    </x-site.nav-link>
+                    <form method="POST" action="{{ route('logout') }}" class="px-3 py-2">
+                        @csrf
+                        <button type="submit" class="text-sm text-content-muted hover:text-content-primary">
+                            Đăng xuất
+                        </button>
+                    </form>
+                @else
+                    <div class="flex flex-col gap-2 px-3">
+                        <x-ui.button variant="secondary" href="{{ route('login') }}" class="w-full justify-center">
+                            Đăng nhập
+                        </x-ui.button>
+                        <x-ui.button href="{{ route('register') }}" class="w-full justify-center">
+                            Đăng ký
+                        </x-ui.button>
+                    </div>
+                @endauth
+            </div>
         </nav>
     </div>
 </header>

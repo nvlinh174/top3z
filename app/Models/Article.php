@@ -296,4 +296,15 @@ class Article extends Model implements HasMedia, HasRichContent
             ->where('session_token', $sessionToken)
             ->exists();
     }
+
+    public function hasViewerInterest(?int $userId, string $sessionToken): bool
+    {
+        if ($userId !== null) {
+            return $this->interests()
+                ->where('user_id', $userId)
+                ->exists();
+        }
+
+        return $this->hasGuestInterest($sessionToken);
+    }
 }

@@ -14,16 +14,21 @@
         <span class="text-base font-normal text-content-muted">({{ $commentCount }})</span>
     </h2>
 
-    <p class="mt-2 text-sm text-content-muted">
-        Bạn không cần tài khoản. Ý kiến giúp chúng tôi chọn chủ đề workshop phù hợp — có thể trả lời bình luận của nhau.
-    </p>
+    @auth
+        <p class="mt-2 text-sm text-content-muted">
+            Ý kiến của bạn sẽ hiển thị dưới tên tài khoản <strong class="font-medium text-content-primary">{{ auth()->user()->name }}</strong>.
+        </p>
+    @else
+        <p class="mt-2 text-sm text-content-muted">
+            Bạn không cần tài khoản. Ý kiến giúp chúng tôi chọn chủ đề workshop phù hợp — có thể trả lời bình luận của nhau.
+        </p>
+    @endauth
 
     <form
         method="POST"
         action="{{ route('workshops.comments.store', $workshop) }}"
         class="mt-8 flex flex-col gap-5 border-b border-zinc-800/80 pb-10"
-        x-data="guestNameForm"
-        @submit="remember"
+        @guest x-data="guestNameForm" @submit="remember" @endguest
     >
         @csrf
 
@@ -32,11 +37,13 @@
             <input type="text" name="website" id="comment-website" tabindex="-1" autocomplete="off">
         </div>
 
-        <x-workshop.guest-name-field
-            input-id="guest_name"
-            :server-value="old('reply_to_id') ? '' : old('guest_name', '')"
-            :show-errors="! old('reply_to_id')"
-        />
+        @guest
+            <x-workshop.guest-name-field
+                input-id="guest_name"
+                :server-value="old('reply_to_id') ? '' : old('guest_name', '')"
+                :show-errors="! old('reply_to_id')"
+            />
+        @endguest
 
         <div>
             <label for="body" class="mb-2 block text-sm font-medium text-content-primary">
