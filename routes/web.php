@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityReactionController;
+use App\Http\Controllers\CommunitySavedController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopCommentController;
@@ -37,6 +38,7 @@ Route::get('/community', [CommunityController::class, 'index'])->name('community
 
 Route::middleware('auth')->group(function () {
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
+    Route::get('/community/saved', [CommunitySavedController::class, 'index'])->name('community.saved');
     Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
     Route::post('/community', [CommunityPostController::class, 'store'])
         ->middleware('throttle:10,1')
