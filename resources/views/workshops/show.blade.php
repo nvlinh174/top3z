@@ -68,17 +68,12 @@
                         {!! $workshop->renderRichContent('body') !!}
                     </div>
 
-                    <div class="mt-12 rounded-[var(--radius-card)] border border-dashed border-zinc-700 bg-surface-raised/50 p-8 text-center">
-                        <p class="font-display font-semibold text-content-primary">Thảo luận &amp; góp ý</p>
-                        <p class="mt-2 text-sm text-content-muted">
-                            Bình luận và vote tham gia — sẽ có ở Phase 2.
-                        </p>
-                    </div>
+                    <x-workshop.comments-section :workshop="$workshop" />
                 </div>
 
                 <div class="mt-10 lg:col-span-1 lg:mt-0">
                     <div class="lg:sticky lg:top-24">
-                        <x-workshop.meta-sidebar :workshop="$workshop" />
+                        <x-workshop.meta-sidebar :workshop="$workshop" :has-interest="$hasInterest" />
                     </div>
                 </div>
             </div>

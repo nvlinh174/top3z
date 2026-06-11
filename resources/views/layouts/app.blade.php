@@ -21,6 +21,7 @@
     <x-site.header />
 
     <main class="flex-1">
+        <x-ui.flash-messages />
         @yield('content')
     </main>
 

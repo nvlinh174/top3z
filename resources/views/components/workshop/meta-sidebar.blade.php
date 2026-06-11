@@ -1,5 +1,6 @@
 @props([
     'workshop',
+    'hasInterest' => false,
 ])
 
 @php
@@ -20,33 +21,28 @@
                     </svg>
                     Giờ mở cửa
                 </dt>
-                <dd class="mt-1 font-mono text-content-primary">{{ $workshop->getFormattedSchedule() }}</dd>
+                <dd class="mt-2 font-mono text-content-primary">{{ $workshop->getFormattedSchedule() }}</dd>
             </div>
         @endif
 
         @if ($workshop->category)
             <div>
                 <dt class="text-content-muted">Danh mục</dt>
-                <dd class="mt-1 text-content-primary">{{ $workshop->category->name }}</dd>
+                <dd class="mt-2 text-content-primary">{{ $workshop->category->name }}</dd>
             </div>
         @endif
 
         @if ($workshop->author)
             <div>
                 <dt class="text-content-muted">Tổ chức</dt>
-                <dd class="mt-1 text-content-primary">{{ $workshop->author->name }}</dd>
+                <dd class="mt-2 text-content-primary">{{ $workshop->author->name }}</dd>
             </div>
         @endif
     </dl>
 
-    <div class="mt-8 border-t border-zinc-800/80 pt-6">
+    <div class="mt-8 border-t border-zinc-800/80 pt-8">
         @if ($workshop->isUpcomingWorkshop())
-            <x-ui.button variant="primary" type="button" class="w-full opacity-60" disabled>
-                Tôi sẽ tham gia
-            </x-ui.button>
-            <p class="mt-2 text-center text-xs text-content-muted">
-                Vote tham gia — Phase 2
-            </p>
+            <x-workshop.interest-form :workshop="$workshop" :has-interest="$hasInterest" />
         @else
             <p class="text-center text-sm text-content-muted">
                 Buổi workshop đã diễn ra.

@@ -10,6 +10,7 @@ use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -207,5 +208,49 @@ class Article extends Model implements HasMedia, HasRichContent
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return HasMany<ArticleInterest, $this>
+     */
+    public function interests(): HasMany
+    {
+        return $this->hasMany(ArticleInterest::class);
+    }
+
+    /**
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * @return HasMany<Comment, $this>
+     */
+    public function visibleComments(): HasMany
+    {
+        return $this->comments()->visible()->latest();
+    }
+
+    /**
+     * @return HasMany<Comment, $this>
+     */
+    public function rootComments(): HasMany
+    {
+        return $this->comments()->visible()->roots()->latest();
+    }
+
+    public function visibleCommentCount(): int
+    {
+        return $this->comments()->visible()->count();
+    }
+
+    public function hasGuestInterest(string $sessionToken): bool
+    {
+        return $this->interests()
+            ->where('session_token', $sessionToken)
+            ->exists();
     }
 }

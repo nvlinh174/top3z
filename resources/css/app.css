@@ -34,6 +34,17 @@
         @apply bg-surface-base text-content-primary font-body antialiased;
     }
 
+    button:not(:disabled),
+    a[href],
+    label[for],
+    summary {
+        cursor: pointer;
+    }
+
+    button:disabled {
+        cursor: not-allowed;
+    }
+
     [x-cloak] {
         display: none !important;
     }

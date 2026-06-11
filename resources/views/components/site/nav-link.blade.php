@@ -4,7 +4,7 @@
 ])
 
 @php
-    $classes = 'text-sm font-medium transition';
+    $classes = 'text-sm font-medium transition cursor-pointer';
 
     if ($active) {
         $classes .= ' text-brand-400';

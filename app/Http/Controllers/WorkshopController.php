@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Models\Article;
+use App\Support\GuestEngagement;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -39,10 +40,19 @@ class WorkshopController extends Controller
             404
         );
 
-        $article->load(['category', 'author', 'media']);
+        $article->loadCount('interests');
+        $article->load([
+            'category',
+            'author',
+            'media',
+            'rootComments.visibleReplies.replyTo',
+        ]);
+
+        $sessionToken = GuestEngagement::sessionToken();
 
         return view('workshops.show', [
             'workshop' => $article,
+            'hasInterest' => $article->hasGuestInterest($sessionToken),
         ]);
     }
 }
