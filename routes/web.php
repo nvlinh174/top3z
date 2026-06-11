@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopCommentController;
@@ -32,12 +33,22 @@ Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::cl
     ->name('workshops.comments.store');
 
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
-Route::get('/community/{article:slug}', [CommunityController::class, 'show'])->name('community.show');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
+    Route::post('/community', [CommunityPostController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('community.store');
+    Route::get('/community/{article:slug}/edit', [CommunityPostController::class, 'edit'])->name('community.edit');
+    Route::patch('/community/{article:slug}', [CommunityPostController::class, 'update'])
+        ->middleware('throttle:10,1')
+        ->name('community.update');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/community/{article:slug}', [CommunityController::class, 'show'])->name('community.show');
 
 require __DIR__.'/auth.php';

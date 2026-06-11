@@ -1,7 +1,39 @@
 import './bootstrap';
+import './community-editor';
 import Alpine from 'alpinejs';
 
 const GUEST_NAME_STORAGE_KEY = 'top3z_guest_name';
+
+Alpine.data('communityPostForm', (config = {}) => ({
+    existingThumbnail: config.existingThumbnail ?? null,
+    thumbnailPreview: null,
+    existingGallery: config.existingGallery ?? [],
+    galleryPreviews: [],
+
+    previewThumbnail(event) {
+        const file = event.target.files?.[0];
+
+        if (! file) {
+            return;
+        }
+
+        if (this.thumbnailPreview) {
+            URL.revokeObjectURL(this.thumbnailPreview);
+        }
+
+        this.thumbnailPreview = URL.createObjectURL(file);
+    },
+
+    previewGallery(event) {
+        this.clearGalleryPreviews();
+        this.galleryPreviews = Array.from(event.target.files ?? []).map((file) => URL.createObjectURL(file));
+    },
+
+    clearGalleryPreviews() {
+        this.galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
+        this.galleryPreviews = [];
+    },
+}));
 
 Alpine.data('guestNameForm', () => ({
     storedName: '',

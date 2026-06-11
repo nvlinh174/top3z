@@ -6,10 +6,18 @@
 @section('content')
     <section class="border-b border-zinc-800/80 bg-surface-raised/30 py-12 sm:py-16">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <x-site.section-heading
-                title="Cộng đồng"
-                subtitle="Trải nghiệm, ảnh sản phẩm và câu chuyện từ các buổi workshop — đọc và lấy cảm hứng."
-            />
+            <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <x-site.section-heading
+                    title="Cộng đồng"
+                    subtitle="Trải nghiệm, ảnh sản phẩm và câu chuyện từ các buổi workshop — đọc và lấy cảm hứng."
+                />
+
+                @auth
+                    <x-ui.button href="{{ route('community.create') }}" class="shrink-0">
+                        Viết bài mới
+                    </x-ui.button>
+                @endauth
+            </div>
 
             @if ($categories->isNotEmpty())
                 <nav class="mt-8 flex flex-wrap gap-2" aria-label="Lọc danh mục">
@@ -55,7 +63,7 @@
                     </x-ui.button>
                 </x-ui.card>
             @else
-                <div class="columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($posts as $post)
                         <x-community.post-card :post="$post" />
                     @endforeach

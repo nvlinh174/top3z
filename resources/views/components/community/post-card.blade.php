@@ -9,7 +9,7 @@
 
 <a
     href="{{ route('community.show', $post) }}"
-    class="group block break-inside-avoid"
+    class="group block h-full"
 >
     <x-ui.card hover class="overflow-hidden !p-0">
         @if ($coverUrl)

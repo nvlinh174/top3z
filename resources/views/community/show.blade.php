@@ -52,6 +52,14 @@
 
             <x-community.author-box :post="$post" class="mt-8" />
 
+            @can('update', $post)
+                <div class="mt-6">
+                    <x-ui.button variant="secondary" href="{{ route('community.edit', $post) }}">
+                        Sửa bài viết
+                    </x-ui.button>
+                </div>
+            @endcan
+
             <div class="prose-workshop mt-10">
                 {!! $post->renderRichContent('body') !!}
             </div>

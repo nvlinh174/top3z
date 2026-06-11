@@ -21,6 +21,10 @@
 
         <div class="hidden items-center gap-3 md:flex">
             @auth
+                <x-ui.button variant="secondary" href="{{ route('community.create') }}">
+                    Viết bài mới
+                </x-ui.button>
+
                 <div class="relative" x-on:click.outside="userMenu = false">
                     <button
                         type="button"
@@ -44,6 +48,9 @@
                         x-transition
                         class="absolute right-0 z-50 mt-2 w-48 rounded-[var(--radius-button)] border border-zinc-800 bg-surface-raised py-1 shadow-lg"
                     >
+                        <a href="{{ route('community.create') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
+                            Viết bài mới
+                        </a>
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
                             Tài khoản
                         </a>
@@ -102,6 +109,9 @@
             <div class="mt-3 border-t border-zinc-800/80 pt-3">
                 @auth
                     <p class="px-3 py-2 text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                    <x-site.nav-link :href="route('community.create')" :active="request()->routeIs('community.create')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
+                        Viết bài mới
+                    </x-site.nav-link>
                     <x-site.nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Tài khoản
                     </x-site.nav-link>

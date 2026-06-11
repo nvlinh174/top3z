@@ -58,6 +58,52 @@
         background-size: 24px 24px;
     }
 
+    .community-editor .ql-toolbar.ql-snow {
+        @apply rounded-t-[var(--radius-button)] border border-zinc-700 bg-surface-raised;
+    }
+
+    .community-editor .ql-container.ql-snow {
+        @apply min-h-[28rem] rounded-b-[var(--radius-button)] border border-t-0 border-zinc-700 bg-surface-base text-sm text-content-primary;
+    }
+
+    .community-editor .ql-editor {
+        @apply min-h-[26rem] leading-relaxed;
+    }
+
+    .community-editor .ql-editor.ql-blank::before {
+        @apply text-content-muted not-italic;
+    }
+
+    .community-editor .ql-snow .ql-stroke {
+        stroke: oklch(0.65 0.02 85);
+    }
+
+    .community-editor .ql-snow .ql-fill {
+        fill: oklch(0.65 0.02 85);
+    }
+
+    .community-editor .ql-snow .ql-picker {
+        @apply text-content-muted;
+    }
+
+    .community-editor .ql-snow .ql-picker-options {
+        @apply border border-zinc-700 bg-surface-raised;
+    }
+
+    .community-editor .ql-snow.ql-toolbar button:hover,
+    .community-editor .ql-snow .ql-toolbar button:hover,
+    .community-editor .ql-snow.ql-toolbar button.ql-active,
+    .community-editor .ql-snow .ql-toolbar button.ql-active {
+        @apply text-brand-400;
+    }
+
+    .community-editor .ql-snow.ql-toolbar button:hover .ql-stroke,
+    .community-editor .ql-snow .ql-toolbar button:hover .ql-stroke,
+    .community-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+    .community-editor .ql-snow .ql-toolbar button.ql-active .ql-stroke {
+        stroke: oklch(0.78 0.14 75);
+    }
+
     .prose-workshop {
         @apply max-w-none text-content-primary leading-relaxed;
 
