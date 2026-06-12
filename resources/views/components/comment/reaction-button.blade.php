@@ -26,7 +26,7 @@
 @endphp
 
 <div
-    {{ $attributes->merge(['class' => 'inline-flex flex-col items-start']) }}
+    {{ $attributes->merge(['class' => 'inline-flex']) }}
     x-data="commentReaction({
         toggleUrl: @js($toggleUrl),
         loginUrl: @js($loginUrl),
@@ -56,10 +56,4 @@
         </svg>
         <span x-show="count > 0" x-text="count.toLocaleString('vi-VN')"></span>
     </button>
-
-    @if ($isCommunity && ! auth()->check())
-        <span class="mt-0.5 text-[10px] leading-tight text-content-muted">
-            Không cần tài khoản để thích
-        </span>
-    @endif
 </div>

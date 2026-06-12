@@ -252,18 +252,3 @@ test('comment from another article returns not found', function () {
         ->postJson(route('workshops.comment-reactions.toggle', [$workshop, $comment]))
         ->assertNotFound();
 });
-
-test('community post shows guest comment like hint', function () {
-    $post = createCommunityPost(['slug' => 'community-comment-like-ui']);
-
-    Comment::query()->create([
-        'article_id' => $post->getKey(),
-        'guest_name' => 'Khách',
-        'body' => 'Bình luận hiển thị hint',
-        'status' => CommentStatus::Active,
-    ]);
-
-    $this->get(route('community.show', $post))
-        ->assertSuccessful()
-        ->assertSee('Không cần tài khoản để thích');
-});
