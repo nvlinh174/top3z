@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleReactionType;
 use App\Enums\ArticleType;
+use App\Enums\CommunityFeedSort;
 use App\Enums\GeneralStatus;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -148,14 +149,67 @@ class Article extends Model implements HasMedia, HasRichContent
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    public function scopeLatestCommunityPosts(Builder $query): Builder
+    public function scopePublicCommunityFeed(Builder $query): Builder
     {
         return $query
             ->communityPosts()
             ->moderationApproved()
-            ->published()
+            ->published();
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeLatestCommunityPosts(Builder $query): Builder
+    {
+        return $query
+            ->publicCommunityFeed()
             ->orderByDesc('published_at')
             ->orderByDesc('id');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeSearchCommunityFeed(Builder $query, ?string $term): Builder
+    {
+        if (blank($term)) {
+            return $query;
+        }
+
+        $like = '%'.addcslashes($term, '%_\\').'%';
+
+        return $query->where(function (Builder $searchQuery) use ($like): void {
+            $searchQuery
+                ->where('title', 'like', $like)
+                ->orWhere('excerpt', 'like', $like);
+        });
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeSortedForCommunityFeed(Builder $query, CommunityFeedSort $sort): Builder
+    {
+        return match ($sort) {
+            CommunityFeedSort::Views => $query
+                ->orderByDesc('views_count')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id'),
+            CommunityFeedSort::Likes => $query
+                ->withCount([
+                    'reactions as likes_count' => fn (Builder $reactionQuery) => $reactionQuery->where('type', ArticleReactionType::Like),
+                ])
+                ->orderByDesc('likes_count')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id'),
+            CommunityFeedSort::Latest => $query
+                ->orderByDesc('published_at')
+                ->orderByDesc('id'),
+        };
     }
 
     public function isPublicCommunityPost(): bool
