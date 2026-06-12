@@ -127,6 +127,21 @@ class Article extends Model implements HasMedia, HasRichContent
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
+    public function scopeModerationDraft(Builder $query): Builder
+    {
+        return $query->where('moderation_status', ArticleModerationStatus::Draft);
+    }
+
+    public function isDraftCommunityPost(): bool
+    {
+        return $this->type === ArticleType::Article
+            && $this->moderation_status === ArticleModerationStatus::Draft;
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
     public function scopeUpcomingWorkshops(Builder $query): Builder
     {
         return $query

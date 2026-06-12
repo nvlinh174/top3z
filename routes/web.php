@@ -62,6 +62,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
     Route::get('/community/saved', [CommunitySavedController::class, 'index'])->name('community.saved');
     Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
+    Route::post('/community/drafts', [CommunityPostController::class, 'storeDraft'])
+        ->middleware('throttle:30,1')
+        ->name('community.drafts.store');
+    Route::patch('/community/{article:slug}/draft', [CommunityPostController::class, 'autosaveDraft'])
+        ->middleware('throttle:30,1')
+        ->name('community.drafts.autosave');
+    Route::delete('/community/{article:slug}/draft', [CommunityPostController::class, 'destroyDraft'])
+        ->middleware('throttle:30,1')
+        ->name('community.drafts.destroy');
     Route::post('/community', [CommunityPostController::class, 'store'])
         ->middleware('throttle:10,1')
         ->name('community.store');

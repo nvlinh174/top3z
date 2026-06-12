@@ -16,7 +16,14 @@
 
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         @include('community._form', [
-            'action' => route('community.store'),
+            'post' => $draftPost,
+            'bodyHtml' => old('body', $draftPost?->body ?? ''),
+            'action' => $draftPost ? route('community.update', $draftPost) : route('community.store'),
+            'method' => $draftPost ? 'PATCH' : 'POST',
+            'enableDraft' => true,
+            'draftAutosaveUrl' => $draftPost ? route('community.drafts.autosave', $draftPost) : null,
+            'draftDestroyUrl' => $draftPost ? route('community.drafts.destroy', $draftPost) : null,
+            'latestDraftEditUrl' => $latestDraft ? route('community.edit', $latestDraft) : null,
         ])
     </div>
 @endsection

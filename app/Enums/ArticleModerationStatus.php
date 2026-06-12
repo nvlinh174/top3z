@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum ArticleModerationStatus: int
 {
+    case Draft = 0;
     case Pending = 1;
     case Approved = 2;
     case Rejected = 3;
@@ -11,6 +12,7 @@ enum ArticleModerationStatus: int
     public function label(): string
     {
         return match ($this) {
+            self::Draft => 'Bản nháp',
             self::Pending => 'Chờ duyệt',
             self::Approved => 'Đã đăng',
             self::Rejected => 'Bị từ chối',

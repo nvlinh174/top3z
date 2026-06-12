@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\ArticleModerationStatus;
 use App\Enums\ArticleType;
 use App\Models\Article;
 use App\Models\User;
@@ -42,5 +43,24 @@ class ArticlePolicy
 
         return $article->type === ArticleType::Article
             && $article->author_id === $user->id;
+    }
+
+    public function autosaveDraft(User $user, Article $article): bool
+    {
+        if ($article->moderation_status !== ArticleModerationStatus::Draft) {
+            return false;
+        }
+
+        if ($user->is_admin) {
+            return true;
+        }
+
+        return $article->type === ArticleType::Article
+            && $article->author_id === $user->id;
+    }
+
+    public function deleteDraft(User $user, Article $article): bool
+    {
+        return $this->autosaveDraft($user, $article);
     }
 }

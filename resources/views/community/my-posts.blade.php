@@ -6,6 +6,7 @@
 @section('content')
   @php
       $tabs = [
+          'drafts' => ['label' => 'Bản nháp', 'count' => $draftsCount],
           'published' => ['label' => 'Đã đăng', 'count' => $publishedCount],
           'pending' => ['label' => 'Chờ duyệt', 'count' => $pendingCount],
           'rejected' => ['label' => 'Bị từ chối', 'count' => $rejectedCount],
@@ -99,7 +100,9 @@
       @if ($posts->isEmpty())
         <x-ui.card class="flex flex-col items-center py-12 text-center">
           <p class="font-display text-lg font-semibold text-content-primary">
-            @if ($activeTab === 'pending')
+            @if ($activeTab === 'drafts')
+              Chưa có bản nháp
+            @elseif ($activeTab === 'pending')
               Chưa có bài chờ duyệt
             @elseif ($activeTab === 'rejected')
               Không có bài bị từ chối
@@ -110,6 +113,8 @@
           <p class="mt-2 max-w-md text-sm text-content-muted">
             @if ($activeTab === 'published')
               Bài được duyệt sẽ hiện ở đây và trên trang Cộng đồng.
+            @elseif ($activeTab === 'drafts')
+              Bản nháp được lưu tự động khi bạn soạn bài mới.
             @else
               Viết bài mới để chia sẻ trải nghiệm của bạn.
             @endif
@@ -125,7 +130,11 @@
               <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
                   <x-community.moderation-badge :status="$post->moderation_status" />
-                  @if ($post->submitted_at)
+                  @if ($activeTab === 'drafts')
+                    <time class="text-xs text-content-muted" datetime="{{ $post->updated_at->toIso8601String() }}">
+                      Sửa {{ $post->updated_at->diffForHumans() }}
+                    </time>
+                  @elseif ($post->submitted_at)
                     <time class="text-xs text-content-muted" datetime="{{ $post->submitted_at->toIso8601String() }}">
                       Gửi {{ $post->submitted_at->diffForHumans() }}
                     </time>
@@ -133,8 +142,11 @@
                 </div>
 
                 <h2 class="mt-2 font-display text-lg font-semibold text-content-primary">
-                  <a href="{{ route('community.show', $post) }}" class="hover:text-brand-400">
-                    {{ $post->title }}
+                  <a
+                    href="{{ $activeTab === 'drafts' ? route('community.edit', $post) : route('community.show', $post) }}"
+                    class="hover:text-brand-400"
+                  >
+                    {{ \App\Support\CommunityPostDraft::displayTitle($post->title) }}
                   </a>
                 </h2>
 
@@ -148,11 +160,13 @@
               </div>
 
               <div class="flex shrink-0 flex-wrap gap-2">
-                <x-ui.button variant="secondary" href="{{ route('community.show', $post) }}">
-                  Xem
-                </x-ui.button>
-                <x-ui.button variant="ghost" href="{{ route('community.edit', $post) }}">
-                  Sửa
+                @if ($activeTab !== 'drafts')
+                  <x-ui.button variant="secondary" href="{{ route('community.show', $post) }}">
+                    Xem
+                  </x-ui.button>
+                @endif
+                <x-ui.button variant="{{ $activeTab === 'drafts' ? 'secondary' : 'ghost' }}" href="{{ route('community.edit', $post) }}">
+                  {{ $activeTab === 'drafts' ? 'Tiếp tục soạn' : 'Sửa' }}
                 </x-ui.button>
               </div>
             </x-ui.card>

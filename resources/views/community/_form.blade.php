@@ -3,15 +3,33 @@
     'bodyHtml' => '',
     'action',
     'method' => 'POST',
+    'enableDraft' => false,
+    'draftAutosaveUrl' => null,
+    'draftDestroyUrl' => null,
+    'latestDraftEditUrl' => null,
 ])
 
 @php
+    use App\Support\CommunityPostDraft;
+
     $isEdit = $post !== null;
+    $isDraft = $post?->isDraftCommunityPost() ?? false;
+    $draftEnabled = $enableDraft || $isDraft;
     $initialBody = old('body', $bodyHtml);
     $existingThumbnail = $isEdit ? $post->getThumbnailUrl() : null;
     $existingGallery = $isEdit
         ? $post->getMedia('gallery')->map(fn ($media) => $media->getUrl('large'))->values()->all()
         : [];
+    $titleValue = old('title');
+
+    if ($titleValue === null && $post !== null) {
+        $titleValue = $post->title === CommunityPostDraft::PLACEHOLDER_TITLE ? '' : $post->title;
+    }
+
+    $resolvedAutosaveUrl = $draftAutosaveUrl
+        ?? ($isDraft ? route('community.drafts.autosave', $post) : null);
+    $resolvedDestroyUrl = $draftDestroyUrl
+        ?? ($isDraft ? route('community.drafts.destroy', $post) : null);
 @endphp
 
 <form
@@ -19,9 +37,21 @@
     action="{{ $action }}"
     enctype="multipart/form-data"
     data-community-post-form
+    @if ($draftEnabled)
+        data-draft-enabled
+        data-draft-create-url="{{ route('community.drafts.store') }}"
+        @if ($resolvedAutosaveUrl)
+            data-draft-autosave-url="{{ $resolvedAutosaveUrl }}"
+        @endif
+    @endif
     x-data="communityPostForm({
         existingThumbnail: @js($existingThumbnail),
         existingGallery: @js($existingGallery),
+        draftEnabled: @js($draftEnabled),
+        draftCreateUrl: @js(route('community.drafts.store')),
+        draftAutosaveUrl: @js($resolvedAutosaveUrl),
+        draftDestroyUrl: @js($resolvedDestroyUrl),
+        latestDraftEditUrl: @js($latestDraftEditUrl),
     })"
     class="space-y-6"
 >
@@ -37,7 +67,7 @@
                 label="Tiêu đề"
                 name="title"
                 type="text"
-                :value="old('title', $post?->title)"
+                :value="$titleValue"
                 required
                 autofocus
                 placeholder="Nhập tiêu đề bài viết"
@@ -65,11 +95,39 @@
                 <p class="text-xs text-content-muted">
                     Bài sẽ được team duyệt trước khi hiển thị trên trang Cộng đồng.
                 </p>
+                @if ($draftEnabled)
+                    <div class="rounded-[var(--radius-button)] border border-zinc-800/80 bg-surface-base/60 px-3 py-2.5 text-xs text-content-muted">
+                        <p>Lưu nháp tự động vào tài khoản mỗi vài giây.</p>
+                        <p class="mt-1" x-show="draftStatus === 'saving'" x-cloak>Đang lưu nháp…</p>
+                        <p class="mt-1" x-show="draftStatus === 'saved'" x-cloak>
+                            Đã lưu nháp lúc <span x-text="draftSavedLabel()"></span>
+                        </p>
+                        <button
+                            type="button"
+                            x-show="hasStoredDraft"
+                            x-cloak
+                            @click="discardDraft()"
+                            class="mt-2 text-brand-400 hover:text-brand-300"
+                        >
+                            Xóa bản nháp
+                        </button>
+                    </div>
+                @endif
                 <div class="flex flex-col gap-2">
                     <x-ui.button type="submit" class="w-full justify-center">
-                        {{ $isEdit ? 'Gửi lại để duyệt' : 'Gửi duyệt' }}
+                        @if ($isDraft)
+                            Gửi duyệt
+                        @elseif ($isEdit)
+                            Gửi lại để duyệt
+                        @else
+                            Gửi duyệt
+                        @endif
                     </x-ui.button>
-                    <x-ui.button variant="ghost" href="{{ $isEdit ? route('community.show', $post) : route('community.index') }}" class="w-full justify-center">
+                    <x-ui.button
+                        variant="ghost"
+                        href="{{ $isDraft ? route('community.my-posts', ['tab' => 'drafts']) : ($isEdit ? route('community.show', $post) : route('community.index')) }}"
+                        class="w-full justify-center"
+                    >
                         Huỷ
                     </x-ui.button>
                 </div>

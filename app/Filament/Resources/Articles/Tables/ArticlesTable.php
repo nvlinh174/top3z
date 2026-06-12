@@ -61,6 +61,7 @@ class ArticlesTable
                         }
 
                         return match ($state) {
+                            ArticleModerationStatus::Draft => 'gray',
                             ArticleModerationStatus::Pending => 'warning',
                             ArticleModerationStatus::Approved => 'success',
                             ArticleModerationStatus::Rejected => 'danger',
