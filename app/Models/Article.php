@@ -418,7 +418,7 @@ class Article extends Model implements HasMedia, HasRichContent
      */
     public function rootComments(): HasMany
     {
-        return $this->comments()->visible()->roots()->latest();
+        return $this->comments()->inThread()->roots()->latest();
     }
 
     public function visibleCommentCount(): int

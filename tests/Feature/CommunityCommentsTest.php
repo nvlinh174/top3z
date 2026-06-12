@@ -98,7 +98,7 @@ test('preview community post does not show comments section', function () {
         ->assertDontSee('Gửi bình luận');
 });
 
-test('hidden comments are not shown on public community post', function () {
+test('hidden comments show placeholder on public community post', function () {
     $post = createCommunityPost(['slug' => 'community-comment-hidden']);
 
     Comment::query()->create([
@@ -117,5 +117,6 @@ test('hidden comments are not shown on public community post', function () {
     $this->get(route('community.show', $post))
         ->assertSuccessful()
         ->assertSee('Bình luận hiển thị')
+        ->assertSee('Bình luận đã bị xóa')
         ->assertDontSee('Bình luận bị ẩn');
 });

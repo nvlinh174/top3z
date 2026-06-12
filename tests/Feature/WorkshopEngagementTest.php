@@ -65,7 +65,7 @@ test('guest can submit comment on workshop', function () {
         ->assertSee('Mong có thêm workshop về in 3D.');
 });
 
-test('hidden comments are not shown on public workshop page', function () {
+test('hidden comments show placeholder on public workshop page', function () {
     $workshop = createWorkshopArticle(['slug' => 'comment-hidden']);
 
     Comment::query()->create([
@@ -84,6 +84,7 @@ test('hidden comments are not shown on public workshop page', function () {
     $this->get(route('workshops.show', $workshop))
         ->assertSuccessful()
         ->assertSee('Góp ý hiển thị công khai')
+        ->assertSee('Bình luận đã bị xóa')
         ->assertDontSee('Góp ý bị ẩn không hiển thị');
 });
 

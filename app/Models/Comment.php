@@ -16,6 +16,7 @@ class Comment extends Model
         'guest_name',
         'guest_email',
         'body',
+        'edited_at',
         'parent_id',
         'reply_to_id',
         'status',
@@ -25,6 +26,7 @@ class Comment extends Model
     {
         return [
             'status' => CommentStatus::class,
+            'edited_at' => 'datetime',
         ];
     }
 
@@ -35,6 +37,18 @@ class Comment extends Model
     public function scopeVisible(Builder $query): Builder
     {
         return $query->where('status', CommentStatus::Active);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeInThread(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            CommentStatus::Active,
+            CommentStatus::Hidden,
+        ]);
     }
 
     /**
@@ -67,6 +81,11 @@ class Comment extends Model
     public function isRoot(): bool
     {
         return $this->parent_id === null;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->status === CommentStatus::Hidden;
     }
 
     public function displayName(): string
@@ -145,6 +164,14 @@ class Comment extends Model
     public function visibleReplies(): HasMany
     {
         return $this->replies()->visible()->oldest();
+    }
+
+    /**
+     * @return HasMany<self, $this>
+     */
+    public function threadReplies(): HasMany
+    {
+        return $this->replies()->inThread()->oldest();
     }
 
     /**

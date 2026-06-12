@@ -46,11 +46,11 @@ class WorkshopController extends Controller
             'author',
             'media',
             'rootComments' => fn ($query) => $query
-                ->visible()
+                ->inThread()
                 ->withCount('reactions as likes_count')
                 ->with([
                     'user.media',
-                    'visibleReplies' => fn ($replyQuery) => $replyQuery
+                    'threadReplies' => fn ($replyQuery) => $replyQuery
                         ->withCount('reactions as likes_count')
                         ->with(['replyTo', 'user.media']),
                 ]),
