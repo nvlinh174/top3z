@@ -47,6 +47,9 @@ Route::post('/community/{article:slug}/comments', [CommunityCommentController::c
 Route::post('/community/{article:slug}/reactions/toggle', [CommunityReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
     ->name('community.reactions.toggle');
+Route::post('/community/{article:slug}/comments/{comment}/reactions/toggle', [CommentReactionController::class, 'toggleCommunity'])
+    ->middleware('throttle:30,1')
+    ->name('community.comment-reactions.toggle');
 
 Route::middleware('auth')->group(function () {
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
@@ -62,9 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/workshops/{article:slug}/comments/{comment}/reactions/toggle', [CommentReactionController::class, 'toggleWorkshop'])
         ->middleware('throttle:30,1')
         ->name('workshops.comment-reactions.toggle');
-    Route::post('/community/{article:slug}/comments/{comment}/reactions/toggle', [CommentReactionController::class, 'toggleCommunity'])
-        ->middleware('throttle:30,1')
-        ->name('community.comment-reactions.toggle');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

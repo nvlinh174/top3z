@@ -161,4 +161,18 @@ class Comment extends Model
             ->where('user_id', $user->getKey())
             ->exists();
     }
+
+    public function hasViewerReaction(?int $userId, string $sessionToken): bool
+    {
+        if ($userId !== null) {
+            return $this->reactions()
+                ->where('user_id', $userId)
+                ->exists();
+        }
+
+        return $this->reactions()
+            ->whereNull('user_id')
+            ->where('session_token', $sessionToken)
+            ->exists();
+    }
 }

@@ -146,6 +146,7 @@ test('admin can list comment reactions', function () {
     CommentReaction::query()->create([
         'comment_id' => $comment->getKey(),
         'user_id' => $liker->getKey(),
+        'session_token' => hash('sha256', 'admin-comment-reaction'),
     ]);
 
     $this->actingAs($admin)

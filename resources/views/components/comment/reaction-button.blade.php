@@ -8,24 +8,31 @@
     /** @var \App\Models\Comment $comment */
     /** @var \App\Models\Article $article */
 
-    $toggleUrl = $reactionContext === 'community'
+    use App\Support\GuestEngagement;
+
+    $isCommunity = $reactionContext === 'community';
+    $sessionToken = GuestEngagement::sessionToken();
+
+    $toggleUrl = $isCommunity
         ? route('community.comment-reactions.toggle', [$article, $comment])
         : route('workshops.comment-reactions.toggle', [$article, $comment]);
 
-    $showUrl = $reactionContext === 'community'
+    $showUrl = $isCommunity
         ? route('community.show', $article)
         : route('workshops.show', $article);
 
     $loginUrl = route('login', ['intended' => $showUrl.'#thao-luan']);
+    $liked = $comment->hasViewerReaction(auth()->id(), $sessionToken);
 @endphp
 
 <div
-    {{ $attributes->merge(['class' => 'inline-flex']) }}
+    {{ $attributes->merge(['class' => 'inline-flex flex-col items-start']) }}
     x-data="commentReaction({
         toggleUrl: @js($toggleUrl),
         loginUrl: @js($loginUrl),
+        allowGuest: @js($isCommunity),
         authenticated: @js(auth()->check()),
-        liked: @js(auth()->check() && $comment->hasUserReaction(auth()->user())),
+        liked: @js($liked),
         count: @js((int) ($comment->likes_count ?? 0)),
     })"
 >
@@ -33,8 +40,7 @@
         type="button"
         @click="toggle()"
         :disabled="loading"
-        :class="authenticated ? 'hover:text-brand-400' : 'cursor-pointer opacity-60 hover:opacity-80'"
-        class="inline-flex items-center gap-1 text-xs font-medium text-content-muted transition"
+        class="inline-flex items-center gap-1 text-xs font-medium text-content-muted transition hover:text-brand-400"
         :aria-pressed="liked"
         aria-label="Yêu thích bình luận"
     >
@@ -50,4 +56,10 @@
         </svg>
         <span x-show="count > 0" x-text="count.toLocaleString('vi-VN')"></span>
     </button>
+
+    @if ($isCommunity && ! auth()->check())
+        <span class="mt-0.5 text-[10px] leading-tight text-content-muted">
+            Không cần tài khoản để thích
+        </span>
+    @endif
 </div>

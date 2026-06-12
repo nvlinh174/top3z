@@ -13,6 +13,8 @@ class CommentReaction extends Model
     protected $fillable = [
         'comment_id',
         'user_id',
+        'session_token',
+        'ip_hash',
     ];
 
     /**

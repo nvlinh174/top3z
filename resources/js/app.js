@@ -38,13 +38,14 @@ Alpine.data('communityPostForm', (config = {}) => ({
 Alpine.data('commentReaction', (config = {}) => ({
     toggleUrl: config.toggleUrl ?? '',
     loginUrl: config.loginUrl ?? '/login',
+    allowGuest: config.allowGuest ?? false,
     authenticated: config.authenticated ?? false,
     liked: config.liked ?? false,
     count: config.count ?? 0,
     loading: false,
 
     async toggle() {
-        if (! this.authenticated) {
+        if (! this.allowGuest && ! this.authenticated) {
             window.location.href = this.loginUrl;
 
             return;
