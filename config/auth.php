@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -62,7 +64,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
 
         // 'users' => [
@@ -111,5 +113,17 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Member Password (admin-created accounts)
+    |--------------------------------------------------------------------------
+    |
+    | Temporary password assigned when an admin creates a member account.
+    | Share with the member via Zalo/message; they should change it at /profile.
+    |
+    */
+
+    'default_member_password' => env('DEFAULT_MEMBER_PASSWORD', 'Top3z@123'),
 
 ];
