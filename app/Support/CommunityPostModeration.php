@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Enums\ArticleModerationStatus;
 use App\Models\Article;
+use App\Notifications\PostModerationApprovedNotification;
+use App\Notifications\PostModerationRejectedNotification;
 
 class CommunityPostModeration
 {
@@ -14,6 +16,12 @@ class CommunityPostModeration
             'published_at' => $article->published_at ?? now(),
             'moderation_note' => null,
         ]);
+
+        $article->refresh();
+
+        if ($article->author !== null) {
+            $article->author->notify(new PostModerationApprovedNotification($article));
+        }
     }
 
     public static function reject(Article $article, string $note): void
@@ -22,5 +30,11 @@ class CommunityPostModeration
             'moderation_status' => ArticleModerationStatus::Rejected,
             'moderation_note' => $note,
         ]);
+
+        $article->refresh();
+
+        if ($article->author !== null) {
+            $article->author->notify(new PostModerationRejectedNotification($article));
+        }
     }
 }

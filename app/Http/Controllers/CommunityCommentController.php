@@ -7,6 +7,7 @@ use App\Enums\CommentStatus;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Article;
 use App\Models\Comment;
+use App\Support\CommunityCommentNotifications;
 use Illuminate\Http\RedirectResponse;
 
 class CommunityCommentController extends Controller
@@ -18,12 +19,15 @@ class CommunityCommentController extends Controller
 
         $parentId = null;
         $replyToId = null;
+        $replyTargetId = null;
 
         if ($request->filled('reply_to_id')) {
             $target = Comment::query()
                 ->visible()
                 ->where('article_id', $article->getKey())
                 ->findOrFail($request->integer('reply_to_id'));
+
+            $replyTargetId = $target->getKey();
 
             $placement = Comment::resolveThreadPlacement($target);
             $parentId = $placement['parent_id'];
@@ -32,7 +36,7 @@ class CommunityCommentController extends Controller
 
         $user = $request->user();
 
-        Comment::query()->create([
+        $comment = Comment::query()->create([
             'article_id' => $article->getKey(),
             'parent_id' => $parentId,
             'reply_to_id' => $replyToId,
@@ -42,6 +46,14 @@ class CommunityCommentController extends Controller
             'body' => $request->validated('body'),
             'status' => CommentStatus::Active,
         ]);
+
+        CommunityCommentNotifications::dispatchForNewComment(
+            article: $article,
+            comment: $comment,
+            commenter: $user,
+            guestName: $user ? null : $request->validated('guest_name'),
+            replyTargetId: $replyTargetId,
+        );
 
         return redirect()
             ->route('community.show', $article)

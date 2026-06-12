@@ -25,6 +25,8 @@
                     Viết bài mới
                 </x-ui.button>
 
+                <x-site.notification-bell />
+
                 <div class="relative" x-on:click.outside="userMenu = false">
                     <button
                         type="button"
@@ -54,6 +56,9 @@
                         </a>
                         <a href="{{ route('community.saved') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
                             Bài đã lưu
+                        </a>
+                        <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
+                            Thông báo
                         </a>
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-content-primary hover:bg-surface-overlay">
                             Tài khoản
@@ -112,9 +117,12 @@
 
             <div class="mt-3 border-t border-zinc-800/80 pt-3">
                 @auth
-                    <div class="flex items-center gap-3 px-3 py-2">
-                        <x-user.avatar :user="auth()->user()" size="sm" />
-                        <p class="text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                    <div class="flex items-center justify-between gap-3 px-3 py-2">
+                        <div class="flex items-center gap-3">
+                            <x-user.avatar :user="auth()->user()" size="sm" />
+                            <p class="text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                        </div>
+                        <x-site.notification-bell />
                     </div>
                     <x-site.nav-link :href="route('community.create')" :active="request()->routeIs('community.create')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Viết bài mới
@@ -124,6 +132,9 @@
                     </x-site.nav-link>
                     <x-site.nav-link :href="route('community.saved')" :active="request()->routeIs('community.saved')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Bài đã lưu
+                    </x-site.nav-link>
+                    <x-site.nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
+                        Thông báo
                     </x-site.nav-link>
                     <x-site.nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Tài khoản

@@ -134,6 +134,134 @@ Alpine.data('communityReactions', (config = {}) => ({
     },
 }));
 
+Alpine.data('notificationBell', (config = {}) => ({
+    recentUrl: config.recentUrl ?? '',
+    unreadCountUrl: config.unreadCountUrl ?? '',
+    readAllUrl: config.readAllUrl ?? '',
+    readUrlTemplate: config.readUrlTemplate ?? '',
+    indexUrl: config.indexUrl ?? '',
+    open: false,
+    count: 0,
+    items: [],
+    loading: false,
+    pollTimer: null,
+
+    init() {
+        this.refreshCount();
+        this.pollTimer = setInterval(() => this.refreshCount(), 60_000);
+    },
+
+    destroy() {
+        if (this.pollTimer) {
+            clearInterval(this.pollTimer);
+        }
+    },
+
+    csrfToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+    },
+
+    async refreshCount() {
+        try {
+            const response = await fetch(this.unreadCountUrl, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (! response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            this.count = data.count ?? 0;
+        } catch {
+            // ignore network errors for background poll
+        }
+    },
+
+    async toggle() {
+        this.open = ! this.open;
+
+        if (this.open) {
+            await this.loadRecent();
+        }
+    },
+
+    async loadRecent() {
+        this.loading = true;
+
+        try {
+            const response = await fetch(this.recentUrl, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (! response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            this.count = data.count ?? 0;
+            this.items = data.notifications ?? [];
+        } finally {
+            this.loading = false;
+        }
+    },
+
+    readUrl(id) {
+        return this.readUrlTemplate.replace('__ID__', id);
+    },
+
+    async openItem(item) {
+        try {
+            const response = await fetch(this.readUrl(item.id), {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken(),
+                },
+            });
+
+            if (! response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch {
+            // ignore
+        }
+    },
+
+    async markAllRead() {
+        if (this.count === 0 || this.loading) {
+            return;
+        }
+
+        this.loading = true;
+
+        try {
+            const response = await fetch(this.readAllUrl, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken(),
+                },
+            });
+
+            if (! response.ok) {
+                return;
+            }
+
+            this.count = 0;
+            this.items = this.items.map((item) => ({ ...item, read_at: new Date().toISOString() }));
+        } finally {
+            this.loading = false;
+        }
+    },
+}));
+
 Alpine.data('guestNameForm', () => ({
     storedName: '',
     draftName: '',
