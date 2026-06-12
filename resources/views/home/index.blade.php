@@ -103,13 +103,13 @@
                 subtitle="Chia sẻ trải nghiệm và ảnh sản phẩm sau workshop."
             />
 
-            @if ($recentPosts->isEmpty())
+            @if ($communityPosts->isEmpty())
                 <x-ui.card class="py-10 text-center">
                     <p class="text-sm text-content-muted">Chưa có bài chia sẻ — quay lại sau nhé.</p>
                 </x-ui.card>
             @else
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($recentPosts as $post)
+                    @foreach ($communityPosts as $post)
                         <x-community.post-card :post="$post" />
                     @endforeach
                 </div>

@@ -13,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -66,6 +67,17 @@ class ArticlesTable
                         };
                     })
                     ->sortable(),
+                ToggleColumn::make('is_featured')
+                    ->label('Nổi bật')
+                    ->sortable()
+                    ->alignCenter()
+                    ->disabled(fn (Article $record): bool => $record->type !== ArticleType::Article
+                        || (! $record->isPublicCommunityPost() && ! $record->is_featured))
+                    ->tooltip(fn (Article $record): ?string => match (true) {
+                        $record->type !== ArticleType::Article => 'Chỉ áp dụng bài viết cộng đồng',
+                        ! $record->isPublicCommunityPost() && ! $record->is_featured => 'Chỉ bài đã duyệt mới ghim được',
+                        default => null,
+                    }),
                 TextColumn::make('status')
                     ->label('Kích hoạt')
                     ->badge()
@@ -130,6 +142,12 @@ class ArticlesTable
                 SelectFilter::make('moderation_status')
                     ->label('Trạng thái duyệt')
                     ->options(collect(ArticleModerationStatus::cases())->mapWithKeys(fn (ArticleModerationStatus $case): array => [$case->value => $case->label()])),
+                SelectFilter::make('is_featured')
+                    ->label('Nổi bật trang chủ')
+                    ->options([
+                        '1' => 'Có',
+                        '0' => 'Không',
+                    ]),
             ])
             ->recordActions([
                 ArticleModerationActions::approve(),

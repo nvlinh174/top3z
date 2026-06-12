@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -88,6 +89,10 @@ class ArticleForm
                     ->label('Ghi chú từ chối')
                     ->rows(2)
                     ->maxLength(1000)
+                    ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Article->value),
+                Toggle::make('is_featured')
+                    ->label('Nổi bật trang chủ')
+                    ->helperText('Chỉ bài viết cộng đồng đã duyệt và đang hiển thị mới xuất hiện trên trang chủ (tối đa 3 bài).')
                     ->visible(fn (Get $get): bool => (int) $get('type') === ArticleType::Article->value),
                 DateTimePicker::make('published_at')
                     ->label('Xuất bản lúc')

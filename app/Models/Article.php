@@ -39,6 +39,7 @@ class Article extends Model implements HasMedia, HasRichContent
         'moderation_note',
         'submitted_at',
         'views_count',
+        'is_featured',
         'published_at',
         'starts_at',
         'ends_at',
@@ -55,6 +56,7 @@ class Article extends Model implements HasMedia, HasRichContent
             'moderation_status' => ArticleModerationStatus::class,
             'submitted_at' => 'datetime',
             'views_count' => 'integer',
+            'is_featured' => 'boolean',
             'published_at' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
@@ -165,6 +167,19 @@ class Article extends Model implements HasMedia, HasRichContent
     {
         return $query
             ->publicCommunityFeed()
+            ->orderByDesc('published_at')
+            ->orderByDesc('id');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeFeaturedCommunityPosts(Builder $query): Builder
+    {
+        return $query
+            ->publicCommunityFeed()
+            ->where('is_featured', true)
             ->orderByDesc('published_at')
             ->orderByDesc('id');
     }

@@ -1,10 +1,12 @@
 @props([
     'post',
+    'featured' => null,
 ])
 
 @php
     /** @var \App\Models\Article $post */
     $coverUrl = $post->getCoverImageUrl();
+    $showFeaturedBadge = $featured ?? $post->is_featured;
 @endphp
 
 <div class="group flex h-full flex-col">
@@ -23,6 +25,9 @@
 
             <div class="px-5 pt-4 sm:px-6">
                 <div class="flex flex-wrap items-center gap-2 text-xs text-content-muted">
+                    @if ($showFeaturedBadge)
+                        <x-ui.badge variant="upcoming">Nổi bật</x-ui.badge>
+                    @endif
                     @if ($post->category)
                         <x-ui.badge>{{ $post->category->name }}</x-ui.badge>
                     @endif
