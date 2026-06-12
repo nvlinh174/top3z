@@ -9,23 +9,34 @@
 
 @php
     /** @var \App\Models\Comment $comment */
+    $avatarSize = $nested ? 'sm' : 'md';
 @endphp
 
 <article class="flex items-start gap-3 text-left sm:gap-4">
-    <div
-        @class([
-            'flex shrink-0 items-center justify-center rounded-full bg-brand-500/15 font-display font-semibold text-brand-400',
-            'size-9 text-xs' => $nested,
-            'size-10 text-sm' => ! $nested,
-        ])
-        aria-hidden="true"
-    >
-        {{ $comment->initials() }}
-    </div>
+    @if ($comment->user)
+        <x-user.avatar :user="$comment->user" :size="$avatarSize" />
+    @else
+        <div
+            @class([
+                'flex shrink-0 items-center justify-center rounded-full bg-brand-500/15 font-display font-semibold text-brand-400',
+                'size-8 text-xs' => $nested,
+                'size-10 text-sm' => ! $nested,
+            ])
+            aria-hidden="true"
+        >
+            {{ $comment->initials() }}
+        </div>
+    @endif
 
     <div class="min-w-0 flex-1">
         <header class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span class="text-sm font-semibold text-content-primary">{{ $comment->displayName() }}</span>
+            @if ($comment->user)
+                <a href="{{ route('members.show', $comment->user) }}" class="text-sm font-semibold text-content-primary hover:text-brand-400">
+                    {{ $comment->displayName() }}
+                </a>
+            @else
+                <span class="text-sm font-semibold text-content-primary">{{ $comment->displayName() }}</span>
+            @endif
             <span class="text-content-muted" aria-hidden="true">·</span>
             <time class="text-xs text-content-muted" datetime="{{ $comment->created_at->toIso8601String() }}">
                 {{ $comment->created_at->diffForHumans() }}

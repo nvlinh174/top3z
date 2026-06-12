@@ -48,7 +48,7 @@ class CommunitySavedController extends Controller
                     ->where('user_id', $request->user()->getKey())
                     ->where('type', $type);
             })
-            ->with(['category', 'author', 'media'])
+            ->with(['category', 'author.media', 'media'])
             ->orderByDesc('published_at')
             ->orderByDesc('id');
     }

@@ -19,7 +19,7 @@ class HomeController extends Controller
 
         $recentPosts = Article::query()
             ->latestCommunityPosts()
-            ->with(['category', 'author', 'media'])
+            ->with(['category', 'author.media', 'media'])
             ->limit(3)
             ->get();
 

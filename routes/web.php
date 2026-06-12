@@ -7,6 +7,7 @@ use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityReactionController;
 use App\Http\Controllers\CommunitySavedController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopCommentController;
 use App\Http\Controllers\WorkshopController;
@@ -35,6 +36,8 @@ Route::post('/workshops/{article:slug}/interest', [WorkshopInterestController::c
 Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('workshops.comments.store');
+
+Route::get('/members/{user}', [MemberProfileController::class, 'show'])->name('members.show');
 
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
 Route::post('/community/{article:slug}/comments', [CommunityCommentController::class, 'store'])

@@ -49,9 +49,10 @@ class WorkshopController extends Controller
                 ->visible()
                 ->withCount('reactions as likes_count')
                 ->with([
+                    'user.media',
                     'visibleReplies' => fn ($replyQuery) => $replyQuery
                         ->withCount('reactions as likes_count')
-                        ->with('replyTo'),
+                        ->with(['replyTo', 'user.media']),
                 ]),
         ]);
 

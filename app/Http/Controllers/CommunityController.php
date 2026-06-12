@@ -18,7 +18,7 @@ class CommunityController extends Controller
 
         $query = Article::query()
             ->latestCommunityPosts()
-            ->with(['category', 'author', 'media']);
+            ->with(['category', 'author.media', 'media']);
 
         if (filled($categorySlug)) {
             $query->whereHas('category', function ($categoryQuery) use ($categorySlug): void {
@@ -67,19 +67,20 @@ class CommunityController extends Controller
                     ->visible()
                     ->withCount('reactions as likes_count')
                     ->with([
+                        'user.media',
                         'visibleReplies' => fn ($replyQuery) => $replyQuery
                             ->withCount('reactions as likes_count')
-                            ->with('replyTo'),
+                            ->with(['replyTo', 'user.media']),
                     ]),
             ]);
         }
 
-        $article->load(['category', 'author', 'media']);
+        $article->load(['category', 'author.media', 'media']);
 
         $relatedPosts = Article::query()
             ->latestCommunityPosts()
             ->whereKeyNot($article->getKey())
-            ->with(['category', 'author', 'media'])
+            ->with(['category', 'author.media', 'media'])
             ->limit(3)
             ->get();
 

@@ -33,9 +33,7 @@
                         aria-haspopup="true"
                         x-bind:aria-expanded="userMenu.toString()"
                     >
-                        <span class="flex size-8 items-center justify-center rounded-full bg-brand-500/20 text-xs font-bold text-brand-400">
-                            {{ auth()->user()->name ? mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) : 'U' }}
-                        </span>
+                        <x-user.avatar :user="auth()->user()" size="sm" />
                         <span class="max-w-[8rem] truncate">{{ auth()->user()->name }}</span>
                         <svg class="size-4 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -114,7 +112,10 @@
 
             <div class="mt-3 border-t border-zinc-800/80 pt-3">
                 @auth
-                    <p class="px-3 py-2 text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                    <div class="flex items-center gap-3 px-3 py-2">
+                        <x-user.avatar :user="auth()->user()" size="sm" />
+                        <p class="text-sm font-medium text-content-primary">{{ auth()->user()->name }}</p>
+                    </div>
                     <x-site.nav-link :href="route('community.create')" :active="request()->routeIs('community.create')" class="rounded-lg px-3 py-2 hover:bg-surface-raised">
                         Viết bài mới
                     </x-site.nav-link>
