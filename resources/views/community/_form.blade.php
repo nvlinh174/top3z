@@ -33,6 +33,7 @@
 @endphp
 
 <form
+    id="community-post-form"
     method="POST"
     action="{{ $action }}"
     enctype="multipart/form-data"
@@ -113,7 +114,7 @@
                         </button>
                     </div>
                 @endif
-                <div class="flex flex-col gap-2">
+                <div class="hidden flex-col gap-2 xl:flex">
                     <x-ui.button type="submit" class="w-full justify-center">
                         @if ($isDraft)
                             Gửi duyệt
@@ -223,5 +224,28 @@
                 </div>
             </x-ui.card>
         </aside>
+    </div>
+
+    @php
+        $cancelHref = $isDraft
+            ? route('community.my-posts', ['tab' => 'drafts'])
+            : ($isEdit ? route('community.show', $post) : route('community.index'));
+        $submitLabel = ($isDraft || ! $isEdit) ? 'Gửi duyệt' : 'Gửi lại để duyệt';
+    @endphp
+
+    <div class="mobile-form-actions-spacer xl:hidden" aria-hidden="true"></div>
+
+    <div
+        class="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-800/80 bg-surface-base/95 p-4 backdrop-blur-md xl:hidden"
+        style="padding-bottom: max(1rem, var(--site-safe-bottom)); padding-left: max(1rem, var(--site-safe-left)); padding-right: max(1rem, var(--site-safe-right));"
+    >
+        <div class="mx-auto flex max-w-6xl gap-2">
+            <x-ui.button type="submit" form="community-post-form" class="min-h-11 flex-1 justify-center">
+                {{ $submitLabel }}
+            </x-ui.button>
+            <x-ui.button variant="ghost" :href="$cancelHref" class="min-h-11 shrink-0 justify-center px-4">
+                Huỷ
+            </x-ui.button>
+        </div>
     </div>
 </form>

@@ -11,6 +11,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WebManifestController;
 use App\Http\Controllers\WorkshopCommentController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\WorkshopInterestController;
@@ -27,6 +28,8 @@ Route::get('/robots.txt', function () {
         'Content-Type' => 'text/plain',
     ]);
 })->name('robots');
+
+Route::get('/manifest.webmanifest', WebManifestController::class)->name('manifest');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

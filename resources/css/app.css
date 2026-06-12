@@ -30,8 +30,24 @@
 }
 
 @layer base {
+    :root {
+        --site-safe-top: env(safe-area-inset-top, 0px);
+        --site-safe-right: env(safe-area-inset-right, 0px);
+        --site-safe-bottom: env(safe-area-inset-bottom, 0px);
+        --site-safe-left: env(safe-area-inset-left, 0px);
+    }
+
     body {
         @apply bg-surface-base text-content-primary font-body antialiased;
+    }
+
+    .site-shell {
+        padding-left: var(--site-safe-left);
+        padding-right: var(--site-safe-right);
+    }
+
+    .site-main {
+        padding-bottom: var(--site-safe-bottom);
     }
 
     button:not(:disabled),
@@ -63,11 +79,25 @@
     }
 
     .community-editor .ql-container.ql-snow {
-        @apply min-h-[28rem] rounded-b-[var(--radius-button)] border border-t-0 border-zinc-700 bg-surface-base text-sm text-content-primary;
+        @apply min-h-[16rem] rounded-b-[var(--radius-button)] border border-t-0 border-zinc-700 bg-surface-base text-sm text-content-primary sm:min-h-[22rem] lg:min-h-[28rem];
     }
 
     .community-editor .ql-editor {
-        @apply min-h-[26rem] leading-relaxed;
+        @apply min-h-[14rem] leading-relaxed sm:min-h-[20rem] lg:min-h-[26rem];
+    }
+
+    @media (max-width: 640px) {
+        .community-editor .ql-toolbar.ql-snow {
+            @apply flex flex-wrap gap-1;
+        }
+
+        .community-editor .ql-toolbar.ql-snow .ql-formats {
+            @apply mr-0;
+        }
+    }
+
+    .mobile-form-actions-spacer {
+        height: calc(5.5rem + var(--site-safe-bottom));
     }
 
     .community-editor .ql-editor.ql-blank::before {

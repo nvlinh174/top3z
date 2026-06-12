@@ -1,8 +1,9 @@
 <header
-    class="sticky top-0 z-50 border-b border-zinc-800/80 bg-surface-base/90 backdrop-blur-md"
+    class="site-header sticky top-0 z-50 border-b border-zinc-800/80 bg-surface-base/90 backdrop-blur-md"
+    style="padding-top: var(--site-safe-top);"
     x-data="{ open: false, userMenu: false }"
 >
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <a href="{{ route('home') }}" class="font-display text-lg font-bold tracking-tight text-content-primary">
             Top<span class="text-brand-500">3z</span>
         </a>

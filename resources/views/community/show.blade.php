@@ -11,11 +11,10 @@
 
     <section class="border-b border-zinc-800/80 bg-surface-raised/20 py-8">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <nav class="text-sm text-content-muted" aria-label="Breadcrumb">
-                <a href="{{ route('community.index') }}" class="hover:text-brand-400">Cộng đồng</a>
-                <span class="mx-2">/</span>
-                <span class="text-content-primary">{{ $post->title }}</span>
-            </nav>
+            <x-site.breadcrumb :items="[
+                ['label' => 'Cộng đồng', 'href' => route('community.index')],
+                ['label' => $post->title],
+            ]" />
         </div>
     </section>
 

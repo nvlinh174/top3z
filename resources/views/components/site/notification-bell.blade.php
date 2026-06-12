@@ -37,7 +37,7 @@
         x-show="open"
         x-cloak
         x-transition
-        class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-[var(--radius-button)] border border-zinc-800 bg-surface-raised shadow-lg sm:w-96"
+        class="absolute z-50 mt-2 max-h-[min(24rem,calc(100dvh-6rem))] w-[min(100vw-2rem,24rem)] overflow-hidden rounded-[var(--radius-button)] border border-zinc-800 bg-surface-raised shadow-lg max-sm:fixed max-sm:inset-x-4 max-sm:right-auto max-sm:top-[calc(3.5rem+var(--site-safe-top))] sm:right-0 sm:w-96"
     >
         <div class="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
             <p class="text-sm font-semibold text-content-primary">Thông báo</p>

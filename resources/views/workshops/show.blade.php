@@ -12,11 +12,10 @@
 
     <section class="border-b border-zinc-800/80 bg-surface-raised/20 py-8">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <nav class="text-sm text-content-muted" aria-label="Breadcrumb">
-                <a href="{{ route('workshops.index') }}" class="hover:text-brand-400">Lịch workshop</a>
-                <span class="mx-2">/</span>
-                <span class="text-content-primary">{{ $workshop->title }}</span>
-            </nav>
+            <x-site.breadcrumb :items="[
+                ['label' => 'Lịch workshop', 'href' => route('workshops.index')],
+                ['label' => $workshop->title],
+            ]" />
         </div>
     </section>
 
