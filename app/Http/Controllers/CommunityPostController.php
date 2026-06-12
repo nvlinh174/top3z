@@ -9,6 +9,7 @@ use App\Http\Requests\StoreCommunityPostRequest;
 use App\Http\Requests\UpdateCommunityPostRequest;
 use App\Models\Article;
 use App\Models\Category;
+use App\Support\AuthorCommunityStats;
 use App\Support\CommunityPostBody;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,6 +86,8 @@ class CommunityPostController extends Controller
             'pendingCount' => (int) ($counts[ArticleModerationStatus::Pending->value] ?? 0),
             'publishedCount' => (int) ($counts[ArticleModerationStatus::Approved->value] ?? 0),
             'rejectedCount' => (int) ($counts[ArticleModerationStatus::Rejected->value] ?? 0),
+            'authorStats' => AuthorCommunityStats::summaryFor($request->user()),
+            'topViewedPosts' => AuthorCommunityStats::topViewedPostsFor($request->user()),
         ]);
     }
 

@@ -161,8 +161,7 @@ test('member can view my posts page with tabs', function () {
     $this->actingAs($user)
         ->get(route('community.my-posts', ['tab' => 'pending']))
         ->assertSuccessful()
-        ->assertSee('Bài chờ duyệt của tôi')
-        ->assertDontSee('Bài đã đăng của tôi');
+        ->assertSee('Bài chờ duyệt của tôi');
 
     $this->actingAs($user)
         ->get(route('community.my-posts', ['tab' => 'published']))

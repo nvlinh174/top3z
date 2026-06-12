@@ -25,6 +25,51 @@
         </x-ui.button>
       </div>
 
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <x-ui.card class="!p-5">
+          <p class="text-sm text-content-muted">Tổng lượt xem</p>
+          <p class="mt-2 font-display text-2xl font-bold text-content-primary">
+            {{ number_format($authorStats['total_views'], 0, ',', '.') }}
+          </p>
+        </x-ui.card>
+        <x-ui.card class="!p-5">
+          <p class="text-sm text-content-muted">Lượt thích</p>
+          <p class="mt-2 font-display text-2xl font-bold text-content-primary">
+            {{ number_format($authorStats['total_likes'], 0, ',', '.') }}
+          </p>
+        </x-ui.card>
+        <x-ui.card class="!p-5">
+          <p class="text-sm text-content-muted">Yêu thích</p>
+          <p class="mt-2 font-display text-2xl font-bold text-content-primary">
+            {{ number_format($authorStats['total_favorites'], 0, ',', '.') }}
+          </p>
+        </x-ui.card>
+        <x-ui.card class="!p-5">
+          <p class="text-sm text-content-muted">Bài đã đăng</p>
+          <p class="mt-2 font-display text-2xl font-bold text-content-primary">
+            {{ number_format($authorStats['posts_count'], 0, ',', '.') }}
+          </p>
+        </x-ui.card>
+      </div>
+
+      @if ($topViewedPosts->isNotEmpty())
+        <div class="mt-6 rounded-[var(--radius-card)] border border-zinc-800/80 bg-surface-raised p-5">
+          <h2 class="text-sm font-semibold text-content-primary">Bài xem nhiều nhất</h2>
+          <ol class="mt-3 space-y-2">
+            @foreach ($topViewedPosts as $topPost)
+              <li class="flex items-center justify-between gap-4 text-sm">
+                <a href="{{ route('community.show', $topPost) }}" class="min-w-0 truncate text-content-primary hover:text-brand-400">
+                  {{ $topPost->title }}
+                </a>
+                <span class="shrink-0 font-mono text-xs text-content-muted">
+                  {{ number_format($topPost->views_count, 0, ',', '.') }} lượt xem
+                </span>
+              </li>
+            @endforeach
+          </ol>
+        </div>
+      @endif
+
       <nav class="mt-8 flex flex-wrap gap-2" aria-label="Trạng thái bài viết">
         @foreach ($tabs as $key => $tab)
           <a
