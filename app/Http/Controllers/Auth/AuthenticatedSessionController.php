@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Support\GuestEngagement;
@@ -35,6 +37,11 @@ class AuthenticatedSessionController extends Controller
 
         GuestEngagement::mergeActivityForUser($request->user());
         GuestEngagement::rotateToken();
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::Login,
+            routeName: 'login',
+        );
 
         return redirect()->intended(route('home', absolute: false));
     }

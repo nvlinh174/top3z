@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\GuestEngagement;
@@ -49,6 +51,12 @@ class RegisteredUserController extends Controller
 
         GuestEngagement::mergeActivityForUser($user);
         GuestEngagement::rotateToken();
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::Register,
+            subject: $user,
+            routeName: 'register',
+        );
 
         return redirect(route('home', absolute: false));
     }

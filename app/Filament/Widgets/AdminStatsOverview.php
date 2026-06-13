@@ -13,13 +13,17 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AdminStatsOverview extends StatsOverviewWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 50;
 
     protected ?string $pollingInterval = null;
 
     protected static bool $isLazy = false;
 
-    protected ?string $heading = 'Tổng quan';
+    protected int|string|array $columnSpan = 'full';
+
+    protected ?string $heading = 'Vận hành nội dung';
+
+    protected ?string $description = 'Duyệt bài, thành viên, nội dung mới 7 ngày qua';
 
     protected function getStats(): array
     {

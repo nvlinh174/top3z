@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\ActivityEventType;
 use App\Models\Article;
 use Illuminate\Support\Carbon;
 
@@ -23,6 +24,12 @@ class RecordCommunityPostView
         session([$sessionKey => now()->getTimestamp()]);
 
         $article->increment('views_count');
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::PostView,
+            subject: $article,
+            routeName: 'community.show',
+        );
 
         return true;
     }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Enums\ArticleType;
 use App\Enums\CommentStatus;
 use App\Http\Requests\StoreCommentRequest;
@@ -53,6 +55,13 @@ class CommunityCommentController extends Controller
             commenter: $user,
             guestName: $user ? null : $request->validated('guest_name'),
             replyTargetId: $replyTargetId,
+        );
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::Comment,
+            subject: $article,
+            routeName: 'community.comments.store',
+            metadata: ['context' => 'community'],
         );
 
         return redirect()

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Enums\ArticleReactionType;
 use App\Enums\ArticleType;
 use App\Http\Requests\ToggleCommunityReactionRequest;
@@ -45,6 +47,14 @@ class CommunityReactionController extends Controller
                 'ip_hash' => GuestEngagement::ipHash(),
                 'type' => $type,
             ]);
+
+            app(RecordActivityEvent::class)(
+                type: ActivityEventType::Reaction,
+                subject: $article,
+                routeName: 'community.reactions.toggle',
+                metadata: ['reaction_type' => $type->value],
+            );
+
             $active = true;
         }
 

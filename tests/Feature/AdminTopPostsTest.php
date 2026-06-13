@@ -25,7 +25,7 @@ test('admin dashboard shows top viewed community posts widget', function () {
     $this->actingAs($admin)
         ->get('/admin')
         ->assertSuccessful()
-        ->assertSee('Top 10 lượt xem')
+        ->assertSee('Top lượt xem all-time')
         ->assertSee('Bài nhiều xem nhất')
         ->assertSee('99');
 });
@@ -82,7 +82,7 @@ test('admin dashboard shows top reacted community posts widget', function () {
     $this->actingAs($admin)
         ->get('/admin')
         ->assertSuccessful()
-        ->assertSee('Top 10 reaction')
+        ->assertSee('Top reaction all-time')
         ->assertSee('Bài nhiều reaction');
 });
 

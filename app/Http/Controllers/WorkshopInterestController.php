@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Enums\ArticleType;
 use App\Enums\GeneralStatus;
 use App\Http\Requests\StoreArticleInterestRequest;
@@ -32,6 +34,12 @@ class WorkshopInterestController extends Controller
             'session_token' => $sessionToken,
             'ip_hash' => GuestEngagement::ipHash(),
         ]);
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::WorkshopInterest,
+            subject: $article,
+            routeName: 'workshops.interest.store',
+        );
 
         return redirect()
             ->route('workshops.show', $article)

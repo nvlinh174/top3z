@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class TopReactedCommunityPostsTable extends TableWidget
 {
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 81;
 
     protected static bool $isLazy = false;
 
@@ -23,8 +23,8 @@ class TopReactedCommunityPostsTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Top 10 reaction')
-            ->description('Tổng thích + yêu thích — all-time')
+            ->heading('Top reaction all-time')
+            ->description('Thích + yêu thích trên bài đã duyệt')
             ->query(fn (): Builder => Article::query()
                 ->communityPosts()
                 ->moderationApproved()

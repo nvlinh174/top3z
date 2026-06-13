@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RecentMembersTable extends TableWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 61;
 
     protected static bool $isLazy = false;
 

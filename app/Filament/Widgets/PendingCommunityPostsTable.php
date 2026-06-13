@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PendingCommunityPostsTable extends TableWidget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 60;
 
     protected static bool $isLazy = false;
 

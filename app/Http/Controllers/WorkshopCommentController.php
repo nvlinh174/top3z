@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RecordActivityEvent;
+use App\Enums\ActivityEventType;
 use App\Enums\ArticleType;
 use App\Enums\CommentStatus;
 use App\Enums\GeneralStatus;
@@ -42,6 +44,13 @@ class WorkshopCommentController extends Controller
             'body' => $request->validated('body'),
             'status' => CommentStatus::Active,
         ]);
+
+        app(RecordActivityEvent::class)(
+            type: ActivityEventType::Comment,
+            subject: $article,
+            routeName: 'workshops.comments.store',
+            metadata: ['context' => 'workshop'],
+        );
 
         return redirect()
             ->route('workshops.show', $article)

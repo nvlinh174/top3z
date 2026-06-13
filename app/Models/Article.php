@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -396,6 +397,14 @@ class Article extends Model implements HasMedia, HasRichContent
     public function reactions(): HasMany
     {
         return $this->hasMany(ArticleReaction::class);
+    }
+
+    /**
+     * @return MorphMany<ActivityEvent, $this>
+     */
+    public function activityEvents(): MorphMany
+    {
+        return $this->morphMany(ActivityEvent::class, 'subject');
     }
 
     public function hasUserReaction(User $user, ArticleReactionType $type): bool

@@ -8,13 +8,15 @@ use Filament\Widgets\ChartWidget;
 
 class CommunityActivityChart extends ChartWidget
 {
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 70;
 
     protected static bool $isLazy = false;
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $heading = 'Hoạt động 30 ngày';
+    protected ?string $heading = 'Tăng trưởng cộng đồng 30 ngày';
+
+    protected ?string $description = 'Bài đăng mới và thành viên đăng ký theo ngày';
 
     protected ?string $pollingInterval = null;
 
