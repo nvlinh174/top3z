@@ -22,9 +22,9 @@ test('admin dashboard shows top viewed community posts widget', function () {
         'views_count' => 99,
     ]);
 
-    $this->actingAs($admin)
-        ->get('/admin')
-        ->assertSuccessful()
+    $this->actingAs($admin);
+
+    Livewire::test(TopViewedCommunityPostsTable::class)
         ->assertSee('Top lượt xem all-time')
         ->assertSee('Bài nhiều xem nhất')
         ->assertSee('99');
@@ -79,9 +79,9 @@ test('admin dashboard shows top reacted community posts widget', function () {
         'type' => ArticleReactionType::Favorite,
     ]);
 
-    $this->actingAs($admin)
-        ->get('/admin')
-        ->assertSuccessful()
+    $this->actingAs($admin);
+
+    Livewire::test(TopReactedCommunityPostsTable::class)
         ->assertSee('Top reaction all-time')
         ->assertSee('Bài nhiều reaction');
 });

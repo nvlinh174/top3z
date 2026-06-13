@@ -6,6 +6,7 @@ use App\Actions\RecordActivityEvent;
 use App\Enums\ActivityEventType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Support\ActivityTracker;
 use App\Support\GuestEngagement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class AuthenticatedSessionController extends Controller
         app(RecordActivityEvent::class)(
             type: ActivityEventType::Login,
             routeName: 'login',
+            metadata: ActivityTracker::loginMetadata($request),
         );
 
         return redirect()->intended(route('home', absolute: false));

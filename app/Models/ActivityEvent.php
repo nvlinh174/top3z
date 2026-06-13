@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ActivityEventType;
 use App\Enums\ActivitySource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -49,5 +50,25 @@ class ActivityEvent extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @param  Builder<ActivityEvent>  $query
+     * @return Builder<ActivityEvent>
+     */
+    public function scopeLogins(Builder $query): Builder
+    {
+        return $query->where('event_type', ActivityEventType::Login);
+    }
+
+    /**
+     * @param  Builder<ActivityEvent>  $query
+     * @return Builder<ActivityEvent>
+     */
+    public function scopeMemberLogins(Builder $query): Builder
+    {
+        return $query
+            ->logins()
+            ->whereHas('user', fn (Builder $userQuery): Builder => $userQuery->where('is_admin', false));
     }
 }

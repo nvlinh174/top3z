@@ -14,8 +14,6 @@ class PendingCommunityPostsTable extends TableWidget
 {
     protected static ?int $sort = 60;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 1;
 
     public function table(Table $table): Table

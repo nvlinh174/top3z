@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Filament\Resources\Users\RelationManagers\LoginEventsRelationManager;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
@@ -59,6 +60,16 @@ class UserResource extends Resource
     public static function canEdit(Model $record): bool
     {
         return $record instanceof User && ! $record->is_admin;
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public static function getRelations(): array
+    {
+        return [
+            LoginEventsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

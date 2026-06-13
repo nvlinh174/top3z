@@ -14,8 +14,6 @@ class TopPagesTable extends TableWidget
 {
     protected static ?int $sort = 30;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 1;
 
     public function table(Table $table): Table

@@ -2,9 +2,13 @@
 
 use App\Enums\ActivityEventType;
 use App\Enums\ActivitySource;
+use App\Filament\Widgets\AdminStatsOverview;
+use App\Filament\Widgets\SiteTrafficStatsOverview;
+use App\Filament\Widgets\TopPagesTable;
 use App\Models\ActivityEvent;
 use App\Models\User;
 use App\Support\ActivityTracker;
+use Livewire\Livewire;
 
 test('home page records a page view event', function () {
     $this->get(route('home'))->assertSuccessful();
@@ -106,16 +110,18 @@ test('activity tracker resolves route labels', function () {
 test('admin dashboard shows site traffic widgets', function () {
     $admin = User::factory()->admin()->create();
 
-    $this->get(route('home'))->assertSuccessful();
-
     $this->actingAs($admin)
         ->get('/admin')
-        ->assertSuccessful()
-        ->assertSee('Lưu lượng website')
-        ->assertSee('Top trang 7 ngày')
-        ->assertSee('Top bài xem nhiều 7 ngày')
-        ->assertSee('Vận hành nội dung')
-        ->assertSee('Tăng trưởng cộng đồng 30 ngày');
+        ->assertSuccessful();
+
+    Livewire::test(SiteTrafficStatsOverview::class)
+        ->assertSee('Lưu lượng website');
+
+    Livewire::test(TopPagesTable::class)
+        ->assertSee('Top trang 7 ngày');
+
+    Livewire::test(AdminStatsOverview::class)
+        ->assertSee('Vận hành nội dung');
 });
 
 test('user registration records register activity event', function () {

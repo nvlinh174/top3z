@@ -9,8 +9,6 @@ class SiteTrafficChart extends ChartWidget
 {
     protected static ?int $sort = 20;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 'full';
 
     protected ?string $heading = 'Lưu lượng 30 ngày';

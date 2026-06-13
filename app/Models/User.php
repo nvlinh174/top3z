@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ActivityEventType;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -80,6 +81,24 @@ class User extends Authenticatable implements FilamentUser, HasMedia
             ->published()
             ->orderByDesc('published_at')
             ->orderByDesc('id');
+    }
+
+    /**
+     * @return HasMany<ActivityEvent, $this>
+     */
+    public function activityEvents(): HasMany
+    {
+        return $this->hasMany(ActivityEvent::class);
+    }
+
+    /**
+     * @return HasMany<ActivityEvent, $this>
+     */
+    public function loginEvents(): HasMany
+    {
+        return $this->hasMany(ActivityEvent::class)
+            ->where('event_type', ActivityEventType::Login->value)
+            ->latest('occurred_at');
     }
 
     public function avatarUrl(?string $conversion = 'thumb'): ?string

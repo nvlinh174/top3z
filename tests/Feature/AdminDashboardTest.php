@@ -18,11 +18,11 @@ test('admin dashboard shows pending community post', function () {
         'published_at' => null,
     ]);
 
-    $this->actingAs($admin)
-        ->get('/admin')
-        ->assertSuccessful()
+    $this->actingAs($admin);
+
+    Livewire::test(PendingCommunityPostsTable::class)
         ->assertSee('Bài chờ trên dashboard')
-        ->assertSee('Chờ duyệt');
+        ->assertSee('Bài chờ duyệt');
 });
 
 test('admin can approve pending post from dashboard widget', function () {

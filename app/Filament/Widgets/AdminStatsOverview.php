@@ -17,8 +17,6 @@ class AdminStatsOverview extends StatsOverviewWidget
 
     protected ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 'full';
 
     protected ?string $heading = 'Vận hành nội dung';

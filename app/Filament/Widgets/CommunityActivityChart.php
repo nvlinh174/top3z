@@ -2,15 +2,12 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Article;
-use App\Models\User;
+use App\Support\ActivityTracker;
 use Filament\Widgets\ChartWidget;
 
 class CommunityActivityChart extends ChartWidget
 {
     protected static ?int $sort = 70;
-
-    protected static bool $isLazy = false;
 
     protected int|string|array $columnSpan = 'full';
 
@@ -22,42 +19,24 @@ class CommunityActivityChart extends ChartWidget
 
     protected function getData(): array
     {
-        $labels = [];
-        $publishedPosts = [];
-        $newMembers = [];
-
-        for ($daysAgo = 29; $daysAgo >= 0; $daysAgo--) {
-            $date = now()->subDays($daysAgo)->toDateString();
-            $labels[] = now()->subDays($daysAgo)->format('d/m');
-
-            $publishedPosts[] = Article::query()
-                ->communityPosts()
-                ->moderationApproved()
-                ->whereDate('published_at', $date)
-                ->count();
-
-            $newMembers[] = User::query()
-                ->where('is_admin', false)
-                ->whereDate('created_at', $date)
-                ->count();
-        }
+        $series = ActivityTracker::communityGrowthSeries();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Bài đã đăng',
-                    'data' => $publishedPosts,
+                    'data' => $series->pluck('published_posts')->all(),
                     'borderColor' => '#f59e0b',
                     'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
                 ],
                 [
                     'label' => 'Thành viên mới',
-                    'data' => $newMembers,
+                    'data' => $series->pluck('new_members')->all(),
                     'borderColor' => '#22c55e',
                     'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
                 ],
             ],
-            'labels' => $labels,
+            'labels' => $series->pluck('label')->all(),
         ];
     }
 

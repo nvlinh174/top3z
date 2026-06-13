@@ -9,8 +9,6 @@ class SiteEngagementChart extends ChartWidget
 {
     protected static ?int $sort = 40;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 'full';
 
     protected ?string $heading = 'Tương tác 30 ngày';

@@ -15,8 +15,6 @@ class TopViewedCommunityPostsTable extends TableWidget
 {
     protected static ?int $sort = 80;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 1;
 
     public function table(Table $table): Table

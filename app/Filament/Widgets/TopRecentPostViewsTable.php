@@ -16,8 +16,6 @@ class TopRecentPostViewsTable extends TableWidget
 {
     protected static ?int $sort = 31;
 
-    protected static bool $isLazy = false;
-
     protected int|string|array $columnSpan = 1;
 
     public function table(Table $table): Table
