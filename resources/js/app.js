@@ -408,6 +408,50 @@ Alpine.data('notificationBell', (config = {}) => ({
     },
 }));
 
+Alpine.data('homeSlider', (config = {}) => ({
+    active: 0,
+    count: config.count ?? 0,
+    timer: null,
+    intervalMs: 5000,
+
+    start() {
+        if (this.count <= 1) {
+            return;
+        }
+
+        this.timer = setInterval(() => this.next(), this.intervalMs);
+    },
+
+    destroy() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+    },
+
+    pause() {
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+    },
+
+    resume() {
+        if (this.count <= 1 || this.timer) {
+            return;
+        }
+
+        this.start();
+    },
+
+    next() {
+        this.active = (this.active + 1) % this.count;
+    },
+
+    goTo(index) {
+        this.active = index;
+    },
+}));
+
 Alpine.data('guestNameForm', () => ({
     storedName: '',
     draftName: '',

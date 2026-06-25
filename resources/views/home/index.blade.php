@@ -3,6 +3,8 @@
 @section('title', 'Top3z — Makerspace xây dựng & sáng tạo')
 
 @section('content')
+    <x-site.home-slider :slides="$homeSlides" />
+
     {{-- Hero --}}
     <section class="relative overflow-hidden border-b border-zinc-800/80 bg-blueprint">
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-500/5 via-transparent to-surface-base"></div>

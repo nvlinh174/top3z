@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\HomeSlide;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
@@ -25,6 +26,11 @@ class HomeController extends Controller
         $communityPosts = $this->homepageCommunityPosts();
 
         return view('home.index', [
+            'homeSlides' => HomeSlide::query()
+                ->active()
+                ->ordered()
+                ->with('media')
+                ->get(),
             'featuredWorkshop' => $featuredWorkshop,
             'upcomingWorkshops' => $featuredWorkshop
                 ? $upcoming->slice(1)->values()
