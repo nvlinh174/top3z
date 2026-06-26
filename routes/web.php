@@ -36,12 +36,14 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
 Route::get('/workshops/{article:slug}', [WorkshopController::class, 'show'])->name('workshops.show');
 
-// Mutation routes: action-first URL + model id (same pattern as comment-reactions).
+// Mutation routes: action-first URL + numeric model id.
 Route::post('/workshops/interests/{article}', [WorkshopInterestController::class, 'store'])
     ->middleware('throttle:10,1')
+    ->whereNumber('article')
     ->name('workshops.interest.store');
 Route::post('/workshops/comments/{article}', [WorkshopCommentController::class, 'store'])
     ->middleware('throttle:10,1')
+    ->whereNumber('article')
     ->name('workshops.comments.store');
 
 Route::get('/members/{user}', [MemberProfileController::class, 'show'])->name('members.show');
@@ -49,12 +51,19 @@ Route::get('/members/{user}', [MemberProfileController::class, 'show'])->name('m
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
 Route::post('/community/comments/{article}', [CommunityCommentController::class, 'store'])
     ->middleware('throttle:10,1')
+    ->whereNumber('article')
     ->name('community.comments.store');
 Route::post('/community/reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
+    ->whereNumber('article')
     ->name('community.reactions.toggle');
+Route::post('/community/comments/{comment}/like', [CommentReactionController::class, 'toggleCommunity'])
+    ->middleware('throttle:30,1')
+    ->whereNumber('comment')
+    ->name('community.comments.like');
 Route::post('/community/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleCommunity'])
     ->middleware('throttle:30,1')
+    ->whereNumber('comment')
     ->name('community.comment-reactions.toggle');
 
 Route::middleware('auth')->group(function () {
@@ -83,8 +92,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/community/{article:slug}', [CommunityPostController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('community.update');
+    Route::post('/workshops/comments/{comment}/like', [CommentReactionController::class, 'toggleWorkshop'])
+        ->middleware('throttle:30,1')
+        ->whereNumber('comment')
+        ->name('workshops.comments.like');
     Route::post('/workshops/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleWorkshop'])
         ->middleware('throttle:30,1')
+        ->whereNumber('comment')
         ->name('workshops.comment-reactions.toggle');
     Route::patch('/workshops/comments/{comment}', [CommentController::class, 'update'])
         ->middleware('throttle:10,1')
