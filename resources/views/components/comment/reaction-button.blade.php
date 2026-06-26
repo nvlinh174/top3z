@@ -13,9 +13,9 @@
     $isCommunity = $reactionContext === 'community';
     $sessionToken = GuestEngagement::sessionToken();
 
-    $toggleUrl = $isCommunity
-        ? route('community.comments.like', $comment)
-        : route('workshops.comments.like', $comment);
+    $likeUrl = $isCommunity
+        ? route('community.comment-likes')
+        : route('workshops.comment-likes');
 
     $showUrl = $isCommunity
         ? route('community.show', $article)
@@ -28,7 +28,8 @@
 <div
     {{ $attributes->merge(['class' => 'inline-flex']) }}
     x-data="commentReaction({
-        toggleUrl: @js($toggleUrl),
+        toggleUrl: @js($likeUrl),
+        commentId: @js($comment->getKey()),
         loginUrl: @js($loginUrl),
         allowGuest: @js($isCommunity),
         authenticated: @js(auth()->check()),

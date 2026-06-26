@@ -9,8 +9,8 @@
     /** @var \App\Models\Article $workshop */
     $rootComments = $workshop->rootComments;
     $commentCount = $workshop->visibleCommentCount();
-    $storeUrl = $storeRoute ?? route('workshops.comments.store', $workshop);
     $isCommunity = $context === 'community';
+    $storeUrl = $storeRoute ?? route($isCommunity ? 'community.comments.store' : 'workshops.comments.store');
 @endphp
 
 <section {{ $attributes->merge(['class' => 'mt-12 rounded-[var(--radius-card)] border border-zinc-800/80 bg-surface-raised p-6 sm:p-8']) }} id="thao-luan">
@@ -40,6 +40,7 @@
         @guest x-data="guestNameForm" @submit="remember" @endguest
     >
         @csrf
+        <input type="hidden" name="article_id" value="{{ $workshop->getKey() }}">
 
         <div class="hidden" aria-hidden="true">
             <label for="comment-website">Website</label>

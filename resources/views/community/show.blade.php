@@ -85,7 +85,6 @@
             @if (! ($isPreview ?? false))
                 <x-workshop.comments-section
                     :workshop="$post"
-                    :store-route="route('community.comments.store', $post)"
                     context="community"
                     reaction-context="community"
                     class="mt-10"

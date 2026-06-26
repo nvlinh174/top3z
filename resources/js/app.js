@@ -182,6 +182,7 @@ Alpine.data('communityPostForm', (config = {}) => ({
 
 Alpine.data('commentReaction', (config = {}) => ({
     toggleUrl: config.toggleUrl ?? '',
+    commentId: config.commentId ?? null,
     loginUrl: config.loginUrl ?? '/login',
     allowGuest: config.allowGuest ?? false,
     authenticated: config.authenticated ?? false,
@@ -210,6 +211,9 @@ Alpine.data('commentReaction', (config = {}) => ({
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
                 },
+                body: JSON.stringify({
+                    comment_id: this.commentId,
+                }),
             });
 
             if (response.status === 401) {

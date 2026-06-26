@@ -8,7 +8,7 @@
     /** @var \App\Models\Article $workshop */
     /** @var \App\Models\Comment $replyTo */
     $hasErrors = (int) old('reply_to_id') === $replyTo->getKey();
-    $storeUrl = $storeRoute ?? route('workshops.comments.store', $workshop);
+    $storeUrl = $storeRoute ?? route('workshops.comments.store');
 @endphp
 
 <div class="mt-4 rounded-lg border border-zinc-800/80 bg-surface-base/50 p-4 sm:p-5">
@@ -26,6 +26,7 @@
         @guest x-data="guestNameForm" @submit="remember" @endguest
     >
         @csrf
+        <input type="hidden" name="article_id" value="{{ $workshop->getKey() }}">
         <input type="hidden" name="reply_to_id" value="{{ $replyTo->getKey() }}">
 
         <div class="hidden" aria-hidden="true">

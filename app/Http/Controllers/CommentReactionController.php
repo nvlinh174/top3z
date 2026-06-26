@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ArticleType;
 use App\Enums\CommentStatus;
 use App\Enums\GeneralStatus;
+use App\Http\Requests\ToggleCommentLikeRequest;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\CommentReaction;
@@ -16,7 +17,31 @@ use Illuminate\Http\Request;
 
 class CommentReactionController extends Controller
 {
+    public function likeWorkshop(ToggleCommentLikeRequest $request): JsonResponse
+    {
+        $comment = Comment::query()->findOrFail($request->integer('comment_id'));
+
+        return $this->toggleWorkshopForComment($request, $comment);
+    }
+
+    public function likeCommunity(ToggleCommentLikeRequest $request): JsonResponse
+    {
+        $comment = Comment::query()->findOrFail($request->integer('comment_id'));
+
+        return $this->toggleCommunityForComment($request, $comment);
+    }
+
     public function toggleWorkshop(Request $request, Comment $comment): JsonResponse
+    {
+        return $this->toggleWorkshopForComment($request, $comment);
+    }
+
+    public function toggleCommunity(Request $request, Comment $comment): JsonResponse
+    {
+        return $this->toggleCommunityForComment($request, $comment);
+    }
+
+    private function toggleWorkshopForComment(Request $request, Comment $comment): JsonResponse
     {
         $article = $comment->article;
 
@@ -26,7 +51,7 @@ class CommentReactionController extends Controller
         return $this->toggleForWorkshop($request, $article, $comment);
     }
 
-    public function toggleCommunity(Request $request, Comment $comment): JsonResponse
+    private function toggleCommunityForComment(Request $request, Comment $comment): JsonResponse
     {
         $article = $comment->article;
 

@@ -19,24 +19,29 @@ class StoreCommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var Article $article */
-        $article = $this->route('article');
+        $articleId = $this->integer('article_id');
 
         return [
+            'article_id' => ['required', 'integer', Rule::exists('articles', 'id')],
             'guest_name' => ['nullable', 'string', 'max:100'],
             'guest_email' => ['nullable', 'email', 'max:255'],
             'body' => ['required', 'string', 'max:2000'],
             'reply_to_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('comments', 'id')->where(function ($query) use ($article): void {
+                Rule::exists('comments', 'id')->where(function ($query) use ($articleId): void {
                     $query
-                        ->where('article_id', $article->getKey())
+                        ->where('article_id', $articleId)
                         ->where('status', CommentStatus::Active->value);
                 }),
             ],
             'website' => ['prohibited'],
         ];
+    }
+
+    public function article(): Article
+    {
+        return Article::query()->findOrFail($this->integer('article_id'));
     }
 
     /**

@@ -14,8 +14,9 @@ use Illuminate\Http\RedirectResponse;
 
 class WorkshopCommentController extends Controller
 {
-    public function store(StoreCommentRequest $request, Article $article): RedirectResponse
+    public function store(StoreCommentRequest $request): RedirectResponse
     {
+        $article = $request->article();
         abort_unless($this->isPublicWorkshop($article), 404);
 
         $parentId = null;

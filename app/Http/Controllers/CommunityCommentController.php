@@ -7,15 +7,15 @@ use App\Enums\ActivityEventType;
 use App\Enums\ArticleType;
 use App\Enums\CommentStatus;
 use App\Http\Requests\StoreCommentRequest;
-use App\Models\Article;
 use App\Models\Comment;
 use App\Support\CommunityCommentNotifications;
 use Illuminate\Http\RedirectResponse;
 
 class CommunityCommentController extends Controller
 {
-    public function store(StoreCommentRequest $request, Article $article): RedirectResponse
+    public function store(StoreCommentRequest $request): RedirectResponse
     {
+        $article = $request->article();
         abort_unless($article->type === ArticleType::Article, 404);
         abort_unless($article->isPublicCommunityPost(), 404);
 
