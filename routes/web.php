@@ -35,31 +35,33 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
 Route::get('/workshops/{article:slug}', [WorkshopController::class, 'show'])->name('workshops.show');
-Route::post('/workshops/{article:slug}/interest', [WorkshopInterestController::class, 'store'])
+
+// Mutation routes: action-first URL + model id (same pattern as comment-reactions).
+Route::post('/workshops/interests/{article}', [WorkshopInterestController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('workshops.interest.store');
-Route::post('/workshops/{article:slug}/comments', [WorkshopCommentController::class, 'store'])
+Route::post('/workshops/comments/{article}', [WorkshopCommentController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('workshops.comments.store');
 
 Route::get('/members/{user}', [MemberProfileController::class, 'show'])->name('members.show');
 
 Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
-Route::post('/community/{article:slug}/comments', [CommunityCommentController::class, 'store'])
+Route::post('/community/comments/{article}', [CommunityCommentController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('community.comments.store');
-Route::post('/community/{article:slug}/reactions/toggle', [CommunityReactionController::class, 'toggle'])
+Route::post('/community/reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
     ->name('community.reactions.toggle');
-Route::post('/community/{article:slug}/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleCommunity'])
+Route::post('/community/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleCommunity'])
     ->middleware('throttle:30,1')
     ->name('community.comment-reactions.toggle');
 
 Route::middleware('auth')->group(function () {
-    Route::patch('/community/{article:slug}/comment/{comment}', [CommentController::class, 'update'])
+    Route::patch('/community/comments/{comment}', [CommentController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('community.comments.update');
-    Route::delete('/community/{article:slug}/comment/{comment}', [CommentController::class, 'destroy'])
+    Route::delete('/community/comments/{comment}', [CommentController::class, 'destroy'])
         ->middleware('throttle:10,1')
         ->name('community.comments.destroy');
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
@@ -68,10 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/community/drafts', [CommunityPostController::class, 'storeDraft'])
         ->middleware('throttle:30,1')
         ->name('community.drafts.store');
-    Route::patch('/community/{article:slug}/draft', [CommunityPostController::class, 'autosaveDraft'])
+    Route::patch('/community/drafts/{article}', [CommunityPostController::class, 'autosaveDraft'])
         ->middleware('throttle:30,1')
         ->name('community.drafts.autosave');
-    Route::delete('/community/{article:slug}/draft', [CommunityPostController::class, 'destroyDraft'])
+    Route::delete('/community/drafts/{article}', [CommunityPostController::class, 'destroyDraft'])
         ->middleware('throttle:30,1')
         ->name('community.drafts.destroy');
     Route::post('/community', [CommunityPostController::class, 'store'])
@@ -81,13 +83,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/community/{article:slug}', [CommunityPostController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('community.update');
-    Route::post('/workshops/{article:slug}/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleWorkshop'])
+    Route::post('/workshops/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleWorkshop'])
         ->middleware('throttle:30,1')
         ->name('workshops.comment-reactions.toggle');
-    Route::patch('/workshops/{article:slug}/comment/{comment}', [CommentController::class, 'update'])
+    Route::patch('/workshops/comments/{comment}', [CommentController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('workshops.comments.update');
-    Route::delete('/workshops/{article:slug}/comment/{comment}', [CommentController::class, 'destroy'])
+    Route::delete('/workshops/comments/{comment}', [CommentController::class, 'destroy'])
         ->middleware('throttle:10,1')
         ->name('workshops.comments.destroy');
 

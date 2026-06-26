@@ -16,15 +16,21 @@ use Illuminate\Http\Request;
 
 class CommentReactionController extends Controller
 {
-    public function toggleWorkshop(Request $request, Article $article, Comment $comment): JsonResponse
+    public function toggleWorkshop(Request $request, Comment $comment): JsonResponse
     {
+        $article = $comment->article;
+
+        abort_unless($article !== null, 404);
         abort_unless($this->isPublicWorkshop($article), 404);
 
         return $this->toggleForWorkshop($request, $article, $comment);
     }
 
-    public function toggleCommunity(Request $request, Article $article, Comment $comment): JsonResponse
+    public function toggleCommunity(Request $request, Comment $comment): JsonResponse
     {
+        $article = $comment->article;
+
+        abort_unless($article !== null, 404);
         abort_unless($article->type === ArticleType::Article, 404);
         abort_unless($article->isPublicCommunityPost(), 404);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\NotificationLink;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class NotificationController extends Controller
         $notification = $request->user()->notifications()->whereKey($id)->firstOrFail();
         $notification->markAsRead();
 
-        $url = $notification->data['url'] ?? route('notifications.index');
+        $url = NotificationLink::resolve($notification->data);
 
         if ($request->wantsJson()) {
             return response()->json(['url' => $url]);
@@ -80,7 +81,7 @@ class NotificationController extends Controller
             'id' => $notification->id,
             'type' => $notification->data['type'] ?? $notification->type,
             'message' => $notification->data['message'] ?? '',
-            'url' => $notification->data['url'] ?? route('notifications.index'),
+            'url' => NotificationLink::resolve($notification->data),
             'read_at' => $notification->read_at?->toIso8601String(),
             'created_at' => $notification->created_at?->toIso8601String(),
             'created_at_human' => $notification->created_at?->diffForHumans(),

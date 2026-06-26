@@ -23,11 +23,11 @@
 
     if ($canManage && $workshop) {
         $updateUrl = $reactionContext === 'community'
-            ? route('community.comments.update', [$workshop, $comment])
-            : route('workshops.comments.update', [$workshop, $comment]);
+            ? route('community.comments.update', $comment)
+            : route('workshops.comments.update', $comment);
         $destroyUrl = $reactionContext === 'community'
-            ? route('community.comments.destroy', [$workshop, $comment])
-            : route('workshops.comments.destroy', [$workshop, $comment]);
+            ? route('community.comments.destroy', $comment)
+            : route('workshops.comments.destroy', $comment);
     }
 @endphp
 

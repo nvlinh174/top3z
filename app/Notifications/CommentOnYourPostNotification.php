@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\AppNotificationType;
 use App\Models\Article;
+use App\Support\NotificationLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -37,9 +38,13 @@ class CommentOnYourPostNotification extends Notification
         return [
             'type' => AppNotificationType::CommentOnPost->value,
             'message' => $this->actorName.' đã bình luận bài «'.$this->article->title.'»',
-            'url' => route('community.show', $this->article).'#thao-luan',
             'article_title' => $this->article->title,
             'actor_name' => $this->actorName,
+            ...NotificationLink::route(
+                'community.show',
+                ['article' => $this->article->slug],
+                fragment: 'thao-luan',
+            ),
         ];
     }
 }

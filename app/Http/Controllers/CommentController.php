@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function update(UpdateCommentRequest $request, Article $article, Comment $comment): RedirectResponse
+    public function update(UpdateCommentRequest $request, Comment $comment): RedirectResponse
     {
-        $this->assertCommentContext($article, $comment);
+        $article = $this->resolveCommentArticle($comment);
 
         $comment->update([
             'body' => $request->validated('body'),
@@ -27,9 +27,9 @@ class CommentController extends Controller
             ->with('success', 'Đã cập nhật bình luận.');
     }
 
-    public function destroy(Request $request, Article $article, Comment $comment): RedirectResponse
+    public function destroy(Request $request, Comment $comment): RedirectResponse
     {
-        $this->assertCommentContext($article, $comment);
+        $article = $this->resolveCommentArticle($comment);
         $this->authorize('delete', $comment);
 
         $comment->update([
@@ -39,6 +39,17 @@ class CommentController extends Controller
         return redirect()
             ->to($this->commentRedirectUrl($article).'#thao-luan')
             ->with('success', 'Đã xóa bình luận.');
+    }
+
+    private function resolveCommentArticle(Comment $comment): Article
+    {
+        $article = $comment->article;
+
+        abort_unless($article !== null, 404);
+
+        $this->assertCommentContext($article, $comment);
+
+        return $article;
     }
 
     private function commentRedirectUrl(Article $article): string

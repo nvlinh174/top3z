@@ -14,8 +14,8 @@
     $sessionToken = GuestEngagement::sessionToken();
 
     $toggleUrl = $isCommunity
-        ? route('community.comment-reactions.toggle', [$article, $comment])
-        : route('workshops.comment-reactions.toggle', [$article, $comment]);
+        ? route('community.comment-reactions.toggle', $comment)
+        : route('workshops.comment-reactions.toggle', $comment);
 
     $showUrl = $isCommunity
         ? route('community.show', $article)

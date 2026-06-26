@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\AppNotificationType;
 use App\Models\Article;
+use App\Support\NotificationLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -34,8 +35,8 @@ class PostModerationApprovedNotification extends Notification
         return [
             'type' => AppNotificationType::PostApproved->value,
             'message' => 'Bài «'.$this->article->title.'» đã được duyệt',
-            'url' => route('community.show', $this->article),
             'article_title' => $this->article->title,
+            ...NotificationLink::route('community.show', ['article' => $this->article->slug]),
         ];
     }
 }

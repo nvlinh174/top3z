@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Enums\AppNotificationType;
 use App\Models\Article;
 use App\Models\Comment;
+use App\Support\NotificationLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -38,8 +39,12 @@ class CommentLikedNotification extends Notification
         return [
             'type' => AppNotificationType::CommentLiked->value,
             'message' => 'Có người thích bình luận của bạn',
-            'url' => route('community.show', $this->article).'#comment-'.$this->comment->getKey(),
             'article_title' => $this->article->title,
+            ...NotificationLink::route(
+                'community.show',
+                ['article' => $this->article->slug],
+                fragment: 'comment-'.$this->comment->getKey(),
+            ),
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\AppNotificationType;
 use App\Models\Article;
+use App\Support\NotificationLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -40,8 +41,8 @@ class PostModerationRejectedNotification extends Notification
         return [
             'type' => AppNotificationType::PostRejected->value,
             'message' => $message,
-            'url' => route('community.my-posts', ['tab' => 'rejected']),
             'article_title' => $this->article->title,
+            ...NotificationLink::route('community.my-posts', query: ['tab' => 'rejected']),
         ];
     }
 }
