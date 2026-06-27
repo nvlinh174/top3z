@@ -31,14 +31,17 @@ Route::get('/robots.txt', function () {
 
 Route::get('/manifest.webmanifest', WebManifestController::class)->name('manifest');
 
+Route::post('/article-reactions/comments/{comment}/toggle', [CommentReactionController::class, 'toggle'])
+    ->middleware('throttle:30,1')
+    ->whereNumber('comment')
+    ->name('comment-reactions.toggle');
 Route::post('/article-reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
     ->whereNumber('article')
     ->name('article-reactions.toggle');
 Route::post('/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
-    ->whereNumber('comment')
-    ->name('comment-reactions.toggle');
+    ->whereNumber('comment');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
