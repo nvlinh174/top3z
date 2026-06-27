@@ -31,14 +31,17 @@ Route::get('/robots.txt', function () {
 
 Route::get('/manifest.webmanifest', WebManifestController::class)->name('manifest');
 
-Route::post('/article-reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
-    ->middleware('throttle:30,1')
-    ->whereNumber('article')
-    ->name('article-reactions.toggle');
-Route::post('/discussion-likes/{comment}/toggle', [CommentReactionController::class, 'toggle'])
-    ->middleware('throttle:30,1')
+Route::post('/article-reactions/comments/{comment}/toggle', [CommentReactionController::class, 'toggle'])
+    ->middleware('throttle:60,1')
     ->whereNumber('comment')
     ->name('comment-reactions.toggle');
+Route::post('/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggle'])
+    ->middleware('throttle:60,1')
+    ->whereNumber('comment');
+Route::post('/article-reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
+    ->middleware('throttle:60,1')
+    ->whereNumber('article')
+    ->name('article-reactions.toggle');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -63,10 +66,10 @@ Route::post('/community/comments', [CommunityCommentController::class, 'store'])
 
 Route::middleware('auth')->group(function () {
     Route::patch('/community/comments/{comment}', [CommentController::class, 'update'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:60,1')
         ->name('community.comments.update');
     Route::delete('/community/comments/{comment}', [CommentController::class, 'destroy'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:60,1')
         ->name('community.comments.destroy');
     Route::get('/community/me', [CommunityPostController::class, 'myPosts'])->name('community.my-posts');
     Route::get('/community/saved', [CommunitySavedController::class, 'index'])->name('community.saved');
@@ -88,10 +91,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:10,1')
         ->name('community.update');
     Route::patch('/workshops/comments/{comment}', [CommentController::class, 'update'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:60,1')
         ->name('workshops.comments.update');
     Route::delete('/workshops/comments/{comment}', [CommentController::class, 'destroy'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:60,1')
         ->name('workshops.comments.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
