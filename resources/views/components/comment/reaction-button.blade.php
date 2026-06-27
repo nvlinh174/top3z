@@ -13,7 +13,13 @@
     $isCommunity = $reactionContext === 'community';
     $sessionToken = GuestEngagement::sessionToken();
 
-    $toggleUrl = route('comment-reactions.toggle', $comment);
+    $toggleUrl = $isCommunity
+        ? route('article-reactions.toggle', $article)
+        : route('comment-reactions.toggle', $comment);
+
+    $togglePayload = $isCommunity
+        ? ['type' => 'like', 'comment_id' => $comment->getKey()]
+        : [];
 
     $showUrl = $isCommunity
         ? route('community.show', $article)
@@ -50,7 +56,7 @@
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
                     },
-                    body: JSON.stringify({}),
+                    body: JSON.stringify(@js($togglePayload)),
                 });
 
                 if (response.status === 401) {

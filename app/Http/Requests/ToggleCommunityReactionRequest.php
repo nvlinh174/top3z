@@ -19,7 +19,8 @@ class ToggleCommunityReactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', Rule::enum(ArticleReactionType::class)],
+            'type' => ['required_without:comment_id', Rule::enum(ArticleReactionType::class)],
+            'comment_id' => ['sometimes', 'integer', 'exists:comments,id'],
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Enums\ArticleType;
 use App\Http\Requests\ToggleCommunityReactionRequest;
 use App\Models\Article;
 use App\Models\ArticleReaction;
+use App\Models\Comment;
 use App\Support\GuestEngagement;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,14 @@ class CommunityReactionController extends Controller
     public function toggle(ToggleCommunityReactionRequest $request, Article $article): JsonResponse
     {
         abort_unless($article->type === ArticleType::Article, 404);
+
+        if ($request->filled('comment_id')) {
+            $comment = Comment::query()->findOrFail($request->integer('comment_id'));
+            abort_unless($comment->article_id === $article->getKey(), 404);
+
+            return app(CommentReactionController::class)->toggle($request, $comment);
+        }
+
         abort_unless($article->isPublicCommunityPost(), 404);
 
         $type = $request->enum('type', ArticleReactionType::class);

@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Comment;
+use App\Policies\CommentPolicy;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Comment::class, CommentPolicy::class);
+
         $mediaDisk = (string) config('media-library.disk_name');
 
         SpatieMediaLibraryFileUpload::configureUsing(

@@ -16,7 +16,8 @@
     $avatarSize = $nested ? 'sm' : 'md';
     $canManage = auth()->check()
         && $comment->status === CommentStatus::Active
-        && auth()->user()->can('update', $comment);
+        && $comment->user_id !== null
+        && (int) auth()->id() === (int) $comment->user_id;
 
     $updateUrl = null;
     $destroyUrl = null;
