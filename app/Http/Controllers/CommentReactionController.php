@@ -57,16 +57,7 @@ class CommentReactionController extends Controller
         $user = $request->user();
         $sessionToken = GuestEngagement::sessionToken();
 
-        $existing = CommentReaction::query()
-            ->where('comment_id', $comment->getKey())
-            ->when(
-                $user !== null,
-                fn (Builder $query) => $query->where('user_id', $user->getKey()),
-                fn (Builder $query) => $query
-                    ->whereNull('user_id')
-                    ->where('session_token', $sessionToken),
-            )
-            ->first();
+        $existing = $this->findViewerReaction($comment, $user, $sessionToken);
 
         if ($existing !== null) {
             $existing->delete();
@@ -75,7 +66,9 @@ class CommentReactionController extends Controller
             CommentReaction::query()->create([
                 'comment_id' => $comment->getKey(),
                 'user_id' => $user?->getKey(),
-                'session_token' => $sessionToken,
+                'session_token' => $user !== null
+                    ? $this->memberSessionToken($user)
+                    : $sessionToken,
                 'ip_hash' => GuestEngagement::ipHash(),
             ]);
             $active = true;
@@ -99,10 +92,7 @@ class CommentReactionController extends Controller
 
         $sessionToken = GuestEngagement::sessionToken();
 
-        $existing = CommentReaction::query()
-            ->where('comment_id', $comment->getKey())
-            ->where('user_id', $user->getKey())
-            ->first();
+        $existing = $this->findViewerReaction($comment, $user, $sessionToken);
 
         if ($existing !== null) {
             $existing->delete();
@@ -111,7 +101,7 @@ class CommentReactionController extends Controller
             CommentReaction::query()->create([
                 'comment_id' => $comment->getKey(),
                 'user_id' => $user->getKey(),
-                'session_token' => $sessionToken,
+                'session_token' => $this->memberSessionToken($user),
                 'ip_hash' => GuestEngagement::ipHash(),
             ]);
             $active = true;
@@ -128,5 +118,27 @@ class CommentReactionController extends Controller
         return $article->type === ArticleType::Announcement
             && $article->status === GeneralStatus::ACTIVE
             && ($article->published_at === null || $article->published_at <= now());
+    }
+
+    private function findViewerReaction(Comment $comment, ?User $user, string $sessionToken): ?CommentReaction
+    {
+        return CommentReaction::query()
+            ->where('comment_id', $comment->getKey())
+            ->where(function (Builder $query) use ($user, $sessionToken): void {
+                if ($user !== null) {
+                    $query->where('user_id', $user->getKey())
+                        ->orWhere(function (Builder $query) use ($sessionToken): void {
+                            $query->whereNull('user_id')->where('session_token', $sessionToken);
+                        });
+                } else {
+                    $query->whereNull('user_id')->where('session_token', $sessionToken);
+                }
+            })
+            ->first();
+    }
+
+    private function memberSessionToken(User $user): string
+    {
+        return hash('sha256', 'member:'.$user->getKey().'|'.config('app.key'));
     }
 }

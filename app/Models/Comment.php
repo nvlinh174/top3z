@@ -191,15 +191,17 @@ class Comment extends Model
 
     public function hasViewerReaction(?int $userId, string $sessionToken): bool
     {
-        if ($userId !== null) {
-            return $this->reactions()
-                ->where('user_id', $userId)
-                ->exists();
-        }
-
         return $this->reactions()
-            ->whereNull('user_id')
-            ->where('session_token', $sessionToken)
+            ->where(function (Builder $query) use ($userId, $sessionToken): void {
+                if ($userId !== null) {
+                    $query->where('user_id', $userId)
+                        ->orWhere(function (Builder $query) use ($sessionToken): void {
+                            $query->whereNull('user_id')->where('session_token', $sessionToken);
+                        });
+                } else {
+                    $query->whereNull('user_id')->where('session_token', $sessionToken);
+                }
+            })
             ->exists();
     }
 }
