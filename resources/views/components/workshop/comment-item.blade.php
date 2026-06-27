@@ -11,25 +11,7 @@
     /** @var \App\Models\Comment $comment */
     /** @var \App\Models\Article|null $workshop */
 
-    use App\Enums\CommentStatus;
-
     $avatarSize = $nested ? 'sm' : 'md';
-    $canManage = auth()->check()
-        && $comment->status === CommentStatus::Active
-        && $comment->user_id !== null
-        && (int) auth()->id() === (int) $comment->user_id;
-
-    $updateUrl = null;
-    $destroyUrl = null;
-
-    if ($canManage && $workshop) {
-        $updateUrl = $reactionContext === 'community'
-            ? route('community.comments.update', $comment)
-            : route('workshops.comments.update', $comment);
-        $destroyUrl = $reactionContext === 'community'
-            ? route('community.comments.destroy', $comment)
-            : route('workshops.comments.destroy', $comment);
-    }
 @endphp
 
 <article id="comment-{{ $comment->getKey() }}" class="flex items-start gap-3 text-left sm:gap-4">
@@ -48,7 +30,24 @@
         </div>
     @endif
 
-    <div class="min-w-0 flex-1" @if ($canManage) x-data="{ menuOpen: false, editing: false }" @click.outside="menuOpen = false" @endif>
+    @can('update', $comment)
+        @php
+            $updateUrl = $workshop
+                ? ($reactionContext === 'community'
+                    ? route('community.comments.update', $comment)
+                    : route('workshops.comments.update', $comment))
+                : null;
+            $destroyUrl = $workshop
+                ? ($reactionContext === 'community'
+                    ? route('community.comments.destroy', $comment)
+                    : route('workshops.comments.destroy', $comment))
+                : null;
+        @endphp
+
+        <div class="min-w-0 flex-1" x-data="{ menuOpen: false, editing: false }" @click.outside="menuOpen = false">
+    @else
+        <div class="min-w-0 flex-1">
+    @endcan
         <header class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
             @if ($comment->user)
                 <a href="{{ route('members.show', $comment->user) }}" class="text-sm font-semibold text-content-primary hover:text-brand-400">
@@ -65,7 +64,7 @@
                 <span class="text-xs text-content-muted">· đã chỉnh sửa</span>
             @endif
 
-            @if ($canManage)
+            @can('update', $comment)
                 <div class="relative ml-auto">
                     <button
                         type="button"
@@ -107,14 +106,14 @@
                         </form>
                     </div>
                 </div>
-            @endif
+            @endcan
         </header>
 
         @if ($comment->isHidden())
             <p class="mt-1.5 text-sm italic text-content-muted">
                 Bình luận đã bị xóa
             </p>
-        @elseif ($canManage)
+        @elsecan('update', $comment)
             <div x-show="! editing" class="mt-1.5 text-sm leading-relaxed text-content-primary">
                 @if ($comment->replyTo)
                     <span class="font-medium text-brand-400">{{ '@'.$comment->replyTo->mentionName() }}</span>{{ ' ' }}

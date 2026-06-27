@@ -25,6 +25,8 @@ class Comment extends Model
     protected function casts(): array
     {
         return [
+            'article_id' => 'integer',
+            'user_id' => 'integer',
             'status' => CommentStatus::class,
             'edited_at' => 'datetime',
         ];
@@ -116,6 +118,14 @@ class Comment extends Model
         }
 
         return mb_strtoupper(mb_substr($name, 0, 2));
+    }
+
+    public function isOwnedBy(?User $user): bool
+    {
+        return $user !== null
+            && $this->user_id !== null
+            && $this->status === CommentStatus::Active
+            && (int) $this->user_id === (int) $user->getKey();
     }
 
     /**
