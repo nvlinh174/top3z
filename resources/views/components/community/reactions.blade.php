@@ -14,7 +14,7 @@
 <div
     {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-3']) }}
     x-data="communityReactions({
-        toggleUrl: @js(route('community.reactions.toggle', $post)),
+        toggleUrl: @js(route('article-reactions.toggle', $post)),
         likesCount: @js((int) ($post->likes_count ?? 0)),
         favoritesCount: @js((int) ($post->favorites_count ?? 0)),
         liked: @js($post->hasViewerReaction(auth()->id(), $sessionToken, ArticleReactionType::Like)),

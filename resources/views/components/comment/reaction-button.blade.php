@@ -13,9 +13,7 @@
     $isCommunity = $reactionContext === 'community';
     $sessionToken = GuestEngagement::sessionToken();
 
-    $toggleUrl = $isCommunity
-        ? route('community.comment-reactions.toggle', $comment)
-        : route('workshops.comment-reactions.toggle', $comment);
+    $toggleUrl = route('comment-reactions.toggle', $comment);
 
     $showUrl = $isCommunity
         ? route('community.show', $article)
@@ -27,14 +25,53 @@
 
 <div
     {{ $attributes->merge(['class' => 'inline-flex']) }}
-    x-data="commentReaction({
-        toggleUrl: @js($toggleUrl),
-        loginUrl: @js($loginUrl),
-        allowGuest: @js($isCommunity),
-        authenticated: @js(auth()->check()),
+    x-data="{
         liked: @js($liked),
         count: @js((int) ($comment->likes_count ?? 0)),
-    })"
+        loading: false,
+        async toggle() {
+            if (! @js($isCommunity) && ! @js(auth()->check())) {
+                window.location.href = @js($loginUrl);
+
+                return;
+            }
+
+            if (this.loading) {
+                return;
+            }
+
+            this.loading = true;
+
+            try {
+                const response = await fetch(@js($toggleUrl), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
+                    },
+                    body: JSON.stringify({}),
+                });
+
+                if (response.status === 401) {
+                    window.location.href = @js($loginUrl);
+
+                    return;
+                }
+
+                if (! response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                this.liked = data.active;
+                this.count = data.count;
+            } finally {
+                this.loading = false;
+            }
+        },
+    }"
 >
     <button
         type="button"

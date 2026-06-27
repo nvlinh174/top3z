@@ -51,7 +51,7 @@ class CommunityReactionController extends Controller
             app(RecordActivityEvent::class)(
                 type: ActivityEventType::Reaction,
                 subject: $article,
-                routeName: 'community.reactions.toggle',
+                routeName: 'article-reactions.toggle',
                 metadata: ['reaction_type' => $type->value],
             );
 
