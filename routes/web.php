@@ -51,21 +51,14 @@ Route::get('/community', [CommunityController::class, 'index'])->name('community
 Route::post('/community/comments', [CommunityCommentController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('community.comments.store');
+Route::post('/community/reactions/comments/{comment}/toggle', [CommentReactionController::class, 'toggleCommunity'])
+    ->middleware('throttle:30,1')
+    ->whereNumber('comment')
+    ->name('community.comment-reactions.toggle');
 Route::post('/community/reactions/{article}/toggle', [CommunityReactionController::class, 'toggle'])
     ->middleware('throttle:30,1')
     ->whereNumber('article')
     ->name('community.reactions.toggle');
-Route::post('/community/comment-likes', [CommentReactionController::class, 'likeCommunity'])
-    ->middleware('throttle:30,1')
-    ->name('community.comment-likes');
-Route::post('/community/comments/{comment}/like', [CommentReactionController::class, 'toggleCommunity'])
-    ->middleware('throttle:30,1')
-    ->whereNumber('comment')
-    ->name('community.comments.like');
-Route::post('/community/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleCommunity'])
-    ->middleware('throttle:30,1')
-    ->whereNumber('comment')
-    ->name('community.comment-reactions.toggle');
 
 Route::middleware('auth')->group(function () {
     Route::patch('/community/comments/{comment}', [CommentController::class, 'update'])
@@ -93,14 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/community/{article:slug}', [CommunityPostController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('community.update');
-    Route::post('/workshops/comment-likes', [CommentReactionController::class, 'likeWorkshop'])
-        ->middleware('throttle:30,1')
-        ->name('workshops.comment-likes');
-    Route::post('/workshops/comments/{comment}/like', [CommentReactionController::class, 'toggleWorkshop'])
-        ->middleware('throttle:30,1')
-        ->whereNumber('comment')
-        ->name('workshops.comments.like');
-    Route::post('/workshops/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggleWorkshop'])
+    Route::post('/workshops/reactions/comments/{comment}/toggle', [CommentReactionController::class, 'toggleWorkshop'])
         ->middleware('throttle:30,1')
         ->whereNumber('comment')
         ->name('workshops.comment-reactions.toggle');

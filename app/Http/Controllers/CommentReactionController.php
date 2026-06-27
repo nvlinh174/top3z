@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Enums\ArticleType;
 use App\Enums\CommentStatus;
 use App\Enums\GeneralStatus;
-use App\Http\Requests\ToggleCommentLikeRequest;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\CommentReaction;
+use App\Models\User;
 use App\Support\CommunityCommentLikeNotifications;
 use App\Support\GuestEngagement;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,31 +17,17 @@ use Illuminate\Http\Request;
 
 class CommentReactionController extends Controller
 {
-    public function likeWorkshop(ToggleCommentLikeRequest $request): JsonResponse
+    public function toggleCommunity(Request $request, Comment $comment): JsonResponse
     {
-        $comment = Comment::query()->findOrFail($request->integer('comment_id'));
+        $article = $comment->article;
 
-        return $this->toggleWorkshopForComment($request, $comment);
-    }
+        abort_unless($article !== null, 404);
+        abort_unless($this->canLikeCommunityComment($article), 404);
 
-    public function likeCommunity(ToggleCommentLikeRequest $request): JsonResponse
-    {
-        $comment = Comment::query()->findOrFail($request->integer('comment_id'));
-
-        return $this->toggleCommunityForComment($request, $comment);
+        return $this->toggleForCommunity($request, $article, $comment);
     }
 
     public function toggleWorkshop(Request $request, Comment $comment): JsonResponse
-    {
-        return $this->toggleWorkshopForComment($request, $comment);
-    }
-
-    public function toggleCommunity(Request $request, Comment $comment): JsonResponse
-    {
-        return $this->toggleCommunityForComment($request, $comment);
-    }
-
-    private function toggleWorkshopForComment(Request $request, Comment $comment): JsonResponse
     {
         $article = $comment->article;
 
@@ -51,15 +37,19 @@ class CommentReactionController extends Controller
         return $this->toggleForWorkshop($request, $article, $comment);
     }
 
-    private function toggleCommunityForComment(Request $request, Comment $comment): JsonResponse
+    private function canLikeCommunityComment(Article $article): bool
     {
-        $article = $comment->article;
+        if ($article->type !== ArticleType::Article) {
+            return false;
+        }
 
-        abort_unless($article !== null, 404);
-        abort_unless($article->type === ArticleType::Article, 404);
-        abort_unless($article->isPublicCommunityPost(), 404);
+        if ($article->isPublicCommunityPost()) {
+            return true;
+        }
 
-        return $this->toggleForCommunity($request, $article, $comment);
+        $user = auth()->user();
+
+        return $user instanceof User && $user->can('view', $article);
     }
 
     private function toggleForCommunity(Request $request, Article $article, Comment $comment): JsonResponse
