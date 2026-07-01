@@ -106,8 +106,8 @@ Alpine.data('communityPostForm', (config = {}) => ({
         this.draftAutosaveUrl = payload.autosave_url ?? this.draftAutosaveUrl;
         this.draftDestroyUrl = payload.destroy_url ?? this.draftDestroyUrl;
 
-        if (payload.edit_url) {
-            this.$el.action = payload.edit_url;
+        if (payload.update_url) {
+            this.$el.action = payload.update_url;
 
             let methodInput = this.$el.querySelector('[name="_method"]');
 

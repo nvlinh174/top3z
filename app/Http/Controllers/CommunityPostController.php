@@ -229,6 +229,7 @@ class CommunityPostController extends Controller
             'saved_at' => $article->updated_at?->toIso8601String(),
             'autosave_url' => route('community.drafts.autosave', $article),
             'edit_url' => route('community.edit', $article),
+            'update_url' => route('community.update', $article),
             'destroy_url' => route('community.drafts.destroy', $article),
         ]);
     }
