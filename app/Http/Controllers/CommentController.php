@@ -63,7 +63,7 @@ class CommentController extends Controller
 
     private function assertCommentContext(Article $article, Comment $comment): void
     {
-        abort_unless($comment->article_id === $article->getKey(), 404);
+        abort_unless((int) $comment->article_id === (int) $article->getKey(), 404);
 
         if ($article->type === ArticleType::Article) {
             abort_unless($article->isPublicCommunityPost(), 404);

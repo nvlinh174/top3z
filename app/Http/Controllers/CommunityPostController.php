@@ -92,6 +92,7 @@ class CommunityPostController extends Controller
 
     public function autosaveDraft(AutosaveCommunityDraftRequest $request, Article $article): JsonResponse
     {
+        $this->authorize('autosaveDraft', $article);
         abort_unless($article->type === ArticleType::Article, 404);
 
         if (! $request->hasSavableContent()) {

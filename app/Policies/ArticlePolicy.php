@@ -32,7 +32,7 @@ class ArticlePolicy
             return true;
         }
 
-        return $article->author_id === $user->id;
+        return $article->isAuthoredBy($user);
     }
 
     public function update(User $user, Article $article): bool
@@ -42,7 +42,7 @@ class ArticlePolicy
         }
 
         return $article->type === ArticleType::Article
-            && $article->author_id === $user->id;
+            && $article->isAuthoredBy($user);
     }
 
     public function autosaveDraft(User $user, Article $article): bool
@@ -56,7 +56,7 @@ class ArticlePolicy
         }
 
         return $article->type === ArticleType::Article
-            && $article->author_id === $user->id;
+            && $article->isAuthoredBy($user);
     }
 
     public function deleteDraft(User $user, Article $article): bool

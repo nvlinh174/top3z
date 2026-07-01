@@ -51,7 +51,7 @@ class CommentReactionController extends Controller
 
     private function toggleForCommunity(Request $request, Article $article, Comment $comment): JsonResponse
     {
-        abort_unless($comment->article_id === $article->getKey(), 404);
+        abort_unless((int) $comment->article_id === (int) $article->getKey(), 404);
         abort_unless($comment->status === CommentStatus::Active, 404);
 
         $user = $request->user();
@@ -84,7 +84,7 @@ class CommentReactionController extends Controller
 
     private function toggleForWorkshop(Request $request, Article $article, Comment $comment): JsonResponse
     {
-        abort_unless($comment->article_id === $article->getKey(), 404);
+        abort_unless((int) $comment->article_id === (int) $article->getKey(), 404);
         abort_unless($comment->status === CommentStatus::Active, 404);
 
         $user = $request->user();

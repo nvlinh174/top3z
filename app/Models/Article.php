@@ -55,6 +55,8 @@ class Article extends Model implements HasMedia, HasRichContent
             'type' => ArticleType::class,
             'status' => GeneralStatus::class,
             'moderation_status' => ArticleModerationStatus::class,
+            'author_id' => 'integer',
+            'category_id' => 'integer',
             'submitted_at' => 'datetime',
             'views_count' => 'integer',
             'is_featured' => 'boolean',
@@ -249,6 +251,13 @@ class Article extends Model implements HasMedia, HasRichContent
             && $this->status === GeneralStatus::ACTIVE
             && $this->moderation_status === ArticleModerationStatus::Approved
             && ($this->published_at === null || $this->published_at <= now());
+    }
+
+    public function isAuthoredBy(?User $user): bool
+    {
+        return $user !== null
+            && $this->author_id !== null
+            && (int) $this->author_id === (int) $user->getKey();
     }
 
     public function isUpcomingWorkshop(): bool
