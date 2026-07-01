@@ -55,6 +55,7 @@
         latestDraftEditUrl: @js($latestDraftEditUrl),
     })"
     class="space-y-6"
+    @submit="clearDraftTimer()"
 >
     @csrf
     @if ($method !== 'POST')

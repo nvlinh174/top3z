@@ -31,7 +31,7 @@ Route::get('/robots.txt', function () {
 
 Route::get('/manifest.webmanifest', WebManifestController::class)->name('manifest');
 
-Route::middleware('throttle:60,1')->group(function (): void {
+Route::middleware('throttle:community-reactions')->group(function (): void {
     Route::post('/comment-reactions/{comment}/toggle', [CommentReactionController::class, 'toggle'])
         ->whereNumber('comment')
         ->name('comment-reactions.toggle');
@@ -46,7 +46,7 @@ Route::prefix('workshops')->group(function (): void {
     Route::get('/', [WorkshopController::class, 'index'])->name('workshops.index');
     Route::get('/{article:slug}', [WorkshopController::class, 'show'])->name('workshops.show');
 
-    Route::middleware('throttle:10,1')->group(function (): void {
+    Route::middleware('throttle:workshop-engagement')->group(function (): void {
         Route::post('/interests/{article}', [WorkshopInterestController::class, 'store'])
             ->whereNumber('article')
             ->name('workshops.interest.store');
@@ -59,12 +59,12 @@ Route::get('/members/{user}', [MemberProfileController::class, 'show'])->name('m
 Route::prefix('community')->group(function (): void {
     Route::get('/', [CommunityController::class, 'index'])->name('community.index');
     Route::post('/comments', [CommunityCommentController::class, 'store'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:community-comments')
         ->name('community.comments.store');
 });
 
 Route::middleware('auth')->group(function (): void {
-    Route::middleware('throttle:60,1')->group(function (): void {
+    Route::middleware('throttle:comment-mutations')->group(function (): void {
         Route::patch('/community/comments/{comment}', [CommentController::class, 'update'])
             ->name('community.comments.update');
         Route::delete('/community/comments/{comment}', [CommentController::class, 'destroy'])
@@ -80,18 +80,18 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/saved', [CommunitySavedController::class, 'index'])->name('community.saved');
         Route::get('/create', [CommunityPostController::class, 'create'])->name('community.create');
 
-        Route::middleware('throttle:30,1')->group(function (): void {
+        Route::middleware('throttle:community-draft')->group(function (): void {
             Route::post('/drafts', [CommunityPostController::class, 'storeDraft'])->name('community.drafts.store');
             Route::patch('/drafts/{article}', [CommunityPostController::class, 'autosaveDraft'])->name('community.drafts.autosave');
             Route::delete('/drafts/{article}', [CommunityPostController::class, 'destroyDraft'])->name('community.drafts.destroy');
         });
 
         Route::post('/', [CommunityPostController::class, 'store'])
-            ->middleware('throttle:10,1')
+            ->middleware('throttle:community-post')
             ->name('community.store');
         Route::get('/{article:slug}/edit', [CommunityPostController::class, 'edit'])->name('community.edit');
         Route::patch('/{article:slug}', [CommunityPostController::class, 'update'])
-            ->middleware('throttle:10,1')
+            ->middleware('throttle:community-post')
             ->name('community.update');
     });
 

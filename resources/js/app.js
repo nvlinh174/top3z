@@ -5,7 +5,7 @@ import { getCommunityEditor } from './community-editor';
 import Alpine from 'alpinejs';
 
 const GUEST_NAME_STORAGE_KEY = 'top3z_guest_name';
-const DRAFT_SAVE_DELAY_MS = 3000;
+const DRAFT_SAVE_DELAY_MS = 5000;
 
 Alpine.data('communityPostForm', (config = {}) => ({
     existingThumbnail: config.existingThumbnail ?? null,
@@ -59,6 +59,11 @@ Alpine.data('communityPostForm', (config = {}) => ({
             hour: '2-digit',
             minute: '2-digit',
         });
+    },
+
+    clearDraftTimer() {
+        clearTimeout(this.draftTimer);
+        this.draftTimer = null;
     },
 
     scheduleDraftSave() {
